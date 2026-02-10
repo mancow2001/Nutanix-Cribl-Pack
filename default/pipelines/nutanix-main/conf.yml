@@ -1,0 +1,151 @@
+output: default
+streamtags: []
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: >-
+        Nutanix AHV to ASIM AuditEvent Pipeline: Drops low-value events,
+        normalizes to Microsoft Sentinel ASIM schema, and reduces data volume.
+
+  - id: regex_extract
+    filter: "true"
+    disabled: null
+    conf:
+      source: message
+      iterations: 100
+      overwrite: false
+      regex: /type=(?<audit_type>[A-Z_]+)/
+    description: Extract audit event type
+
+  - id: drop
+    filter: "audit_type === 'PROCTITLE' || audit_type === 'SOCKADDR' || audit_type === 'PARENT'"
+    disabled: false
+    conf: {}
+    description: "Drop low-value events (~45% volume reduction)"
+
+  - id: regex_extract
+    filter: "true"
+    disabled: null
+    conf:
+      source: message
+      iterations: 100
+      overwrite: false
+      regex: /AUID="(?<_actorUsername>[^"]+)"/
+
+  - id: regex_extract
+    filter: "true"
+    disabled: null
+    conf:
+      source: message
+      iterations: 100
+      overwrite: false
+      regex: /\bop=(?<_operation>\w+)/
+
+  - id: regex_extract
+    filter: "true"
+    disabled: null
+    conf:
+      source: message
+      iterations: 100
+      overwrite: false
+      regex: /\bres=(?<_result>\w+)/
+
+  - id: regex_extract
+    filter: "true"
+    disabled: null
+    conf:
+      source: message
+      iterations: 100
+      overwrite: false
+      regex: /exe="(?<_executable>[^"]+)"/
+
+  - id: regex_extract
+    filter: "true"
+    disabled: null
+    conf:
+      source: message
+      iterations: 100
+      overwrite: false
+      regex: /unit=(?<_unit>[^\s']+)/
+
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: EventVendor
+          value: "'Nutanix'"
+        - disabled: false
+          name: EventProduct
+          value: "'AHV'"
+        - disabled: false
+          name: EventSchema
+          value: "'AuditEvent'"
+        - disabled: false
+          name: EventSchemaVersion
+          value: "'0.1.2'"
+        - disabled: false
+          name: EventCount
+          value: "1"
+        - disabled: false
+          name: EventStartTime
+          value: C.Time.strftime(_time,"%Y-%m-%dT%H:%M:%S.%LZ")
+        - disabled: false
+          name: EventEndTime
+          value: C.Time.strftime(_time,"%Y-%m-%dT%H:%M:%S.%LZ")
+        - disabled: false
+          name: EventType
+          value: "audit_type === 'CONFIG_CHANGE' ? 'Set' : audit_type === 'CREATE' ? 'Create' : audit_type === 'DELETE' ? 'Delete' : audit_type === 'SERVICE_START' ? 'Enable' : audit_type === 'SERVICE_STOP' ? 'Disable' : 'Other'"
+        - disabled: false
+          name: EventResult
+          value: "_result === 'success' || _result === '1' ? 'Success' : 'Failure'"
+        - disabled: false
+          name: EventSeverity
+          value: "severity <= 2 ? 'High' : severity === 3 ? 'Medium' : severity === 4 ? 'Low' : 'Informational'"
+        - disabled: false
+          name: EventOriginalType
+          value: audit_type
+        - disabled: false
+          name: Dvc
+          value: host
+        - disabled: false
+          name: DvcHostname
+          value: host
+        - disabled: false
+          name: ActorUsername
+          value: _actorUsername || ''
+        - disabled: false
+          name: Operation
+          value: _operation || audit_type
+        - disabled: false
+          name: Object
+          value: _unit || _executable || ''
+        - disabled: false
+          name: ObjectType
+          value: "audit_type === 'SERVICE_START' || audit_type === 'SERVICE_STOP' ? 'Service' : audit_type === 'CONFIG_CHANGE' ? 'Configuration Atom' : 'Other'"
+      keep:
+        - EventVendor
+        - EventProduct
+        - EventSchema
+        - EventSchemaVersion
+        - EventCount
+        - EventStartTime
+        - EventEndTime
+        - EventType
+        - EventResult
+        - EventSeverity
+        - EventOriginalType
+        - Dvc
+        - DvcHostname
+        - ActorUsername
+        - Operation
+        - Object
+        - ObjectType
+      remove:
+        - "*"
+    description: Create ASIM fields and remove all others for data reduction

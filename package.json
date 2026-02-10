@@ -1,0 +1,13 @@
+{
+  "name": "nutanix-asim",
+  "version": "1.0.0",
+  "displayName": "Nutanix ASIM Normalizer",
+  "description": "Normalizes Nutanix AHV syslog events to Microsoft Sentinel ASIM AuditEvent schema with data reduction capabilities.",
+  "author": "Nathan Bray",
+  "tags": {
+    "streamtags": ["nutanix", "asim", "sentinel", "syslog", "audit"],
+    "dataType": ["logs"],
+    "useCase": ["normalization", "reduction"]
+  },
+  "minVersion": "4.0.0"
+}

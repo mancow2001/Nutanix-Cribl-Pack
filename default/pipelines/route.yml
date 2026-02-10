@@ -1,0 +1,26 @@
+id: default
+groups: {}
+comments: []
+routes:
+  - id: nutanix_route
+    name: Nutanix AHV ASIM
+    final: true
+    disabled: false
+    pipeline: nutanix-main
+    description: Process Nutanix AHV syslog events and normalize to ASIM schema
+    clones: []
+    enableOutputExpression: false
+    outputExpression: null
+    filter: message && host
+    output: default
+  - id: fallback
+    name: Passthrough
+    final: true
+    disabled: false
+    pipeline: passthru
+    description: Pass through events that do not match Nutanix format
+    clones: []
+    enableOutputExpression: false
+    outputExpression: null
+    filter: "true"
+    output: default
