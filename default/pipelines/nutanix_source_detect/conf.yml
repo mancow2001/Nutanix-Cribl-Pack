@@ -1,0 +1,45 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: false
+    conf:
+      comment: >-
+        Nutanix Source Detection & Routing Pipeline - Routes events by appname.
+        consolidated_audit and api_audit/api_audit_v3 chain to their pipelines.
+        Everything else is dropped (kern auditd, audit-alert_manager noise,
+        unrecognized sources). Each chain has final:true so matched events
+        exit before the final drop-all.
+
+  # ── Route by appname: only consolidated_audit and api_audit are processed ──
+
+  - id: chain
+    filter: "appname === 'consolidated_audit'"
+    disabled: false
+    conf:
+      processor: nutanix_consolidated_audit
+      final: true
+    description: "Chain to Consolidated Audit pipeline (Prism Central JSON audit events)"
+
+  - id: chain
+    filter: "appname === 'api_audit' || appname === 'api_audit_v3'"
+    disabled: false
+    conf:
+      processor: nutanix_api_audit
+      final: true
+    description: "Chain to API Audit pipeline (CVM api_audit and api_audit_v3 events)"
+
+  # ── Drop everything else (kern auditd, audit-alert_manager, unrecognized) ──
+
+  - id: drop
+    filter: "true"
+    disabled: false
+    conf: {}
+    description: "Drop all non-audit events (kern auditd, audit-alert_manager noise, unrecognized)"
+description: >-
+  Nutanix source routing pipeline. Chains consolidated_audit and api_audit
+  events to their respective pipelines by appname. Drops all other events
+  including kern auditd logs, audit-alert_manager debug noise, and any
+  unrecognized sources.

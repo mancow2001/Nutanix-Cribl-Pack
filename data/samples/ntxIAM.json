@@ -1,0 +1,46 @@
+[
+  {
+    "message": "{\"affectedEntityList\":[{\"entityType\":\"IAM\",\"name\":\"nathan.bray-p@brightspeed.com\",\"uuid\":\"nathan.bray-p@brightspeed.com\"}],\"alertUid\":\"IAMAdministrationEventAudit\",\"classificationList\":[\"UserAction\"],\"creationTimestampUsecs\":\"1771295234058580\",\"defaultMsg\":\"User nathan.bray-p@brightspeed.com granted permission to [('View_App',)] on app with attributes ['uuid': '993d03d3-ff4d-44a0-af96-44f1f6f4d537', 'project_uuid': ['6c919cde-7637-4c3a-a881-18dfea5494f0'], 'owner_uuid': '00000000-0000-0000-0000-000000000000', 'category_uuid': ['2686b4ba-2eee-5f06-bdbc-dc219dd61a06', 'eb8b4155-b3d1-5772-8d2f-d566d43d8e46']] from\",\"opEndTimestampUsecs\":\"1771295234057047\",\"opStartTimestampUsecs\":\"1771295234057047\",\"operationType\":\"Update\",\"originatingClusterUuid\":\"b8175c41-4363-49a5-82bb-c279ac1061d9\",\"params\":{\"audit_user\":\"nathan.bray-p@brightspeed.com\",\"browser_info\":\"\",\"ip_address\":\"\"},\"recordType\":\"Audit\",\"severity\":\"Audit\",\"userName\":\"nathan.bray-p@brightspeed.com\",\"uuid\":\"1180123b-2214-43d6-9c34-7300bd475ac9\"}",
+    "severity": 6,
+    "facility": 16,
+    "host": "NTNX-10-150-30-12-A-PCVM",
+    "appname": "consolidated_audit",
+    "severityName": "info",
+    "facilityName": "local0",
+    "_time": 1771295257.611,
+    "_raw": "<134>2026-02-16T18:27:37.611656-08:00 NTNX-10-150-30-12-A-PCVM consolidated_audit: {\"affectedEntityList\":[{\"entityType\":\"IAM\",\"name\":\"nathan.bray-p@brightspeed.com\",\"uuid\":\"nathan.bray-p@brightspeed.com\"}],\"alertUid\":\"IAMAdministrationEventAudit\",\"classificationList\":[\"UserAction\"],\"creationTimestampUsecs\":\"1771295234058580\",\"defaultMsg\":\"User nathan.bray-p@brightspeed.com granted permission to [('View_App',)] on app with attributes ['uuid': '993d03d3-ff4d-44a0-af96-44f1f6f4d537', 'project_uuid': ['6c919cde-7637-4c3a-a881-18dfea5494f0'], 'owner_uuid': '00000000-0000-0000-0000-000000000000', 'category_uuid': ['2686b4ba-2eee-5f06-bdbc-dc219dd61a06', 'eb8b4155-b3d1-5772-8d2f-d566d43d8e46']] from\",\"opEndTimestampUsecs\":\"1771295234057047\",\"opStartTimestampUsecs\":\"1771295234057047\",\"operationType\":\"Update\",\"originatingClusterUuid\":\"b8175c41-4363-49a5-82bb-c279ac1061d9\",\"params\":{\"audit_user\":\"nathan.bray-p@brightspeed.com\",\"browser_info\":\"\",\"ip_address\":\"\"},\"recordType\":\"Audit\",\"severity\":\"Audit\",\"userName\":\"nathan.bray-p@brightspeed.com\",\"uuid\":\"1180123b-2214-43d6-9c34-7300bd475ac9\"}"
+  },
+  {
+    "message": "{\"affectedEntityList\":[{\"entityType\":\"IAM\",\"name\":\"nathan.bray-p@brightspeed.com\",\"uuid\":\"nathan.bray-p@brightspeed.com\"}],\"alertUid\":\"IAMAdministrationEventAudit\",\"classificationList\":[\"UserAction\"],\"creationTimestampUsecs\":\"1771295234094631\",\"defaultMsg\":\"User nathan.bray-p@brightspeed.com granted permission to [('View_Prism_Central',)] on prism_central with attributes ['uuid': '9df17177-74fd-47c5-96f1-ae6841453942'] from\",\"opEndTimestampUsecs\":\"1771295234092784\",\"opStartTimestampUsecs\":\"1771295234092784\",\"operationType\":\"Update\",\"originatingClusterUuid\":\"b8175c41-4363-49a5-82bb-c279ac1061d9\",\"params\":{\"audit_user\":\"nathan.bray-p@brightspeed.com\",\"browser_info\":\"\",\"ip_address\":\"\"},\"recordType\":\"Audit\",\"severity\":\"Audit\",\"userName\":\"nathan.bray-p@brightspeed.com\",\"uuid\":\"3c09bac9-51f7-4bc3-8259-52501a776591\"}",
+    "severity": 6,
+    "facility": 16,
+    "host": "NTNX-10-150-30-15-A-PCVM",
+    "appname": "consolidated_audit",
+    "severityName": "info",
+    "facilityName": "local0",
+    "_time": 1771295257.622,
+    "_raw": "<134>2026-02-16T18:27:37.622274-08:00 NTNX-10-150-30-15-A-PCVM consolidated_audit: {\"affectedEntityList\":[{\"entityType\":\"IAM\",\"name\":\"nathan.bray-p@brightspeed.com\",\"uuid\":\"nathan.bray-p@brightspeed.com\"}],\"alertUid\":\"IAMAdministrationEventAudit\",\"classificationList\":[\"UserAction\"],\"creationTimestampUsecs\":\"1771295234094631\",\"defaultMsg\":\"User nathan.bray-p@brightspeed.com granted permission to [('View_Prism_Central',)] on prism_central with attributes ['uuid': '9df17177-74fd-47c5-96f1-ae6841453942'] from\",\"opEndTimestampUsecs\":\"1771295234092784\",\"opStartTimestampUsecs\":\"1771295234092784\",\"operationType\":\"Update\",\"originatingClusterUuid\":\"b8175c41-4363-49a5-82bb-c279ac1061d9\",\"params\":{\"audit_user\":\"nathan.bray-p@brightspeed.com\",\"browser_info\":\"\",\"ip_address\":\"\"},\"recordType\":\"Audit\",\"severity\":\"Audit\",\"userName\":\"nathan.bray-p@brightspeed.com\",\"uuid\":\"3c09bac9-51f7-4bc3-8259-52501a776591\"}"
+  },
+  {
+    "message": "{\"affectedEntityList\":[{\"entityType\":\"Session\",\"name\":\"nathan.bray-p@brightspeed.com\",\"uuid\":\"nathan.bray-p@brightspeed.com\"}],\"alertUid\":\"IAMAdministrationEventAudit\",\"classificationList\":[\"UserAction\"],\"clientIp\":\"\",\"creationTimestampUsecs\":\"1771295271696181\",\"defaultMsg\":\"Session for user nathan.bray-p@brightspeed.com from 10.143.14.222 has been created\",\"opEndTimestampUsecs\":\"1771295271000000\",\"opStartTimestampUsecs\":\"1771295271000000\",\"operationType\":\"Create\",\"originatingClusterUuid\":\"b8175c41-4363-49a5-82bb-c279ac1061d9\",\"params\":{\"audit_user\":\"nathan.bray-p@brightspeed.com\",\"config_after\":\"\",\"config_before\":\"\",\"entity_name\":\"nathan.bray-p@brightspeed.com\",\"entity_type\":\"Session\",\"event_name\":\"\",\"ip_address\":\"10.143.14.222\",\"operation_type\":\"create\"},\"recordType\":\"Audit\",\"sessionId\":\"\",\"severity\":\"Audit\",\"tenantUuid\":\"\",\"userName\":\"nathan.bray-p@brightspeed.com\",\"userUuid\":\"\",\"uuid\":\"4ac63b50-caa2-4340-400f-47e5c4aa6056\"}",
+    "severity": 6,
+    "facility": 16,
+    "host": "NTNX-10-150-30-15-A-PCVM",
+    "appname": "consolidated_audit",
+    "severityName": "info",
+    "facilityName": "local0",
+    "_time": 1771295277.642,
+    "_raw": "<134>2026-02-16T18:27:57.642385-08:00 NTNX-10-150-30-15-A-PCVM consolidated_audit: {\"affectedEntityList\":[{\"entityType\":\"Session\",\"name\":\"nathan.bray-p@brightspeed.com\",\"uuid\":\"nathan.bray-p@brightspeed.com\"}],\"alertUid\":\"IAMAdministrationEventAudit\",\"classificationList\":[\"UserAction\"],\"clientIp\":\"\",\"creationTimestampUsecs\":\"1771295271696181\",\"defaultMsg\":\"Session for user nathan.bray-p@brightspeed.com from 10.143.14.222 has been created\",\"opEndTimestampUsecs\":\"1771295271000000\",\"opStartTimestampUsecs\":\"1771295271000000\",\"operationType\":\"Create\",\"originatingClusterUuid\":\"b8175c41-4363-49a5-82bb-c279ac1061d9\",\"params\":{\"audit_user\":\"nathan.bray-p@brightspeed.com\",\"config_after\":\"\",\"config_before\":\"\",\"entity_name\":\"nathan.bray-p@brightspeed.com\",\"entity_type\":\"Session\",\"event_name\":\"\",\"ip_address\":\"10.143.14.222\",\"operation_type\":\"create\"},\"recordType\":\"Audit\",\"sessionId\":\"\",\"severity\":\"Audit\",\"tenantUuid\":\"\",\"userName\":\"nathan.bray-p@brightspeed.com\",\"userUuid\":\"\",\"uuid\":\"4ac63b50-caa2-4340-400f-47e5c4aa6056\"}"
+  },
+  {
+    "message": "{\"affectedEntityList\":[{\"entityType\":\"IAM\",\"name\":\"nathan.bray-p@brightspeed.com\",\"uuid\":\"nathan.bray-p@brightspeed.com\"}],\"alertUid\":\"IAMAdministrationEventAudit\",\"classificationList\":[\"UserAction\"],\"creationTimestampUsecs\":\"1771295276100268\",\"defaultMsg\":\"User nathan.bray-p@brightspeed.com granted permission to on vm,node from 10.150.30.12\",\"opEndTimestampUsecs\":\"1771295276099033\",\"opStartTimestampUsecs\":\"1771295276099033\",\"operationType\":\"Update\",\"originatingClusterUuid\":\"b8175c41-4363-49a5-82bb-c279ac1061d9\",\"params\":{\"audit_user\":\"nathan.bray-p@brightspeed.com\",\"browser_info\":\"python-requests/2.31.0+nutanix\",\"ip_address\":\"10.150.30.12\"},\"recordType\":\"Audit\",\"severity\":\"Audit\",\"userName\":\"nathan.bray-p@brightspeed.com\",\"uuid\":\"7b5acf5a-c687-4cb7-ab34-d77a0280b377\"}",
+    "severity": 6,
+    "facility": 16,
+    "host": "NTNX-10-150-30-18-A-PCVM",
+    "appname": "consolidated_audit",
+    "severityName": "info",
+    "facilityName": "local0",
+    "_time": 1771295277.745,
+    "_raw": "<134>2026-02-16T18:27:57.745074-08:00 NTNX-10-150-30-18-A-PCVM consolidated_audit: {\"affectedEntityList\":[{\"entityType\":\"IAM\",\"name\":\"nathan.bray-p@brightspeed.com\",\"uuid\":\"nathan.bray-p@brightspeed.com\"}],\"alertUid\":\"IAMAdministrationEventAudit\",\"classificationList\":[\"UserAction\"],\"creationTimestampUsecs\":\"1771295276100268\",\"defaultMsg\":\"User nathan.bray-p@brightspeed.com granted permission to on vm,node from 10.150.30.12\",\"opEndTimestampUsecs\":\"1771295276099033\",\"opStartTimestampUsecs\":\"1771295276099033\",\"operationType\":\"Update\",\"originatingClusterUuid\":\"b8175c41-4363-49a5-82bb-c279ac1061d9\",\"params\":{\"audit_user\":\"nathan.bray-p@brightspeed.com\",\"browser_info\":\"python-requests/2.31.0+nutanix\",\"ip_address\":\"10.150.30.12\"},\"recordType\":\"Audit\",\"severity\":\"Audit\",\"userName\":\"nathan.bray-p@brightspeed.com\",\"uuid\":\"7b5acf5a-c687-4cb7-ab34-d77a0280b377\"}"
+  }
+]

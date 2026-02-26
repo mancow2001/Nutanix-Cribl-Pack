@@ -1,0 +1,5 @@
+http_method,event_type,event_category,security_relevant,risk_level,mitre_tactic,mitre_technique_id,mitre_technique_name,description
+GET,Read,API Access,false,info,-,-,-,API read operation
+POST,Execute,API Access,false,info,Collection,T1213,Data from Information Repositories,API write/query operation
+PUT,Set,API Access,true,medium,Persistence,T1098,Account Manipulation,API update operation
+DELETE,Delete,API Access,true,high,Impact,T1485,Data Destruction,API delete operation

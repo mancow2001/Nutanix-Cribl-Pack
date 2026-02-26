@@ -1,0 +1,41 @@
+output_mode:
+  type: string
+  lib: custom
+  value: "'asim_only'"
+  description: "Output field set. 'asim_only' keeps only 27 ASIM fields. 'enriched' keeps ASIM fields alongside vendor-specific fields."
+  tags: output
+
+raw_handling:
+  type: string
+  lib: custom
+  value: "'remove'"
+  description: "Control _raw field. 'keep' preserves original, 'truncate' keeps first 256 chars, 'remove' drops _raw entirely."
+  tags: output
+
+enable_mitre_enrichment:
+  type: string
+  lib: custom
+  value: "'security_only'"
+  description: "MITRE ATT&CK enrichment. 'all' enriches every event, 'security_only' only security events, 'off' disables."
+  tags: enrichment
+
+event_filter:
+  type: string
+  lib: custom
+  value: "'all'"
+  description: "Event filter mode. 'all' emits everything. 'security' keeps only security alerts and config changes. 'operational' keeps only non-security operational events."
+  tags: output
+
+suppress_api_polling:
+  type: boolean
+  lib: custom
+  value: "false"
+  description: "Suppress repetitive API GET polling from automated integrations. Deduplicates by user and endpoint over the suppression window."
+  tags: suppression
+
+api_suppression_window_sec:
+  type: number
+  lib: custom
+  value: "300"
+  description: "Time window in seconds for API GET polling deduplication. Only applies when suppress_api_polling is enabled."
+  tags: suppression

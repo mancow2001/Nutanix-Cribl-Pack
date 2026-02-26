@@ -1,0 +1,367 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: false
+    conf:
+      comment: >-
+        Nutanix API Audit Pipeline - Parses CVM REST API audit logs (api_audit
+        and api_audit_v3). Extracts pipe-delimited fields: clientType,
+        userName, httpMethod, restEndpoint, entityUuid, queryParams, payload,
+        and loginAttempt. Enriches with MITRE ATT&CK mappings by HTTP method.
+        Suppresses repetitive GET polling from automated integrations.
+        Normalizes to 27-field ASIM AuditEvent schema.
+
+  # ── Stage 1: Vendor-Specific Parsing ──
+
+  - id: regex_extract
+    filter: "true"
+    disabled: false
+    conf:
+      source: message
+      iterations: 1
+      overwrite: false
+      type: regex
+      regex: /clientType=(?<_clientType>[^|]*)/
+
+  - id: regex_extract
+    filter: "true"
+    disabled: false
+    conf:
+      source: message
+      iterations: 1
+      overwrite: false
+      type: regex
+      regex: /userName=(?<_userName>[^|]*)/
+
+  - id: regex_extract
+    filter: "true"
+    disabled: false
+    conf:
+      source: message
+      iterations: 1
+      overwrite: false
+      type: regex
+      regex: /NutanixApiVersion=(?<_apiVersion>[^|]*)/
+
+  - id: regex_extract
+    filter: "true"
+    disabled: false
+    conf:
+      source: message
+      iterations: 1
+      overwrite: false
+      type: regex
+      regex: /httpMethod=(?<_httpMethod>[^|]*)/
+
+  - id: regex_extract
+    filter: "true"
+    disabled: false
+    conf:
+      source: message
+      iterations: 1
+      overwrite: false
+      type: regex
+      regex: /restEndpoint=(?<_restEndpoint>[^|]*)/
+
+  - id: regex_extract
+    filter: "true"
+    disabled: false
+    conf:
+      source: message
+      iterations: 1
+      overwrite: false
+      type: regex
+      regex: /entityUuid=(?<_entityUuid>[^|]*)/
+
+  - id: regex_extract
+    filter: "true"
+    disabled: false
+    conf:
+      source: message
+      iterations: 1
+      overwrite: false
+      type: regex
+      regex: /queryParams=(?<_queryParams>[^|]*)/
+
+  - id: regex_extract
+    filter: "true"
+    disabled: false
+    conf:
+      source: message
+      iterations: 1
+      overwrite: false
+      type: regex
+      regex: /payload=(?<_payload>[^|]*)/
+
+  - id: regex_extract
+    filter: "true"
+    disabled: false
+    conf:
+      source: message
+      iterations: 1
+      overwrite: false
+      type: regex
+      regex: /loginAttempt=(?<_loginAttempt>[^|]*)/
+
+  - id: lookup
+    filter: "_httpMethod != null"
+    disabled: false
+    conf:
+      file: nutanix_api_security.csv
+      matchMode: exact
+      matchType: first
+      reloadPeriodSec: 60
+      addToEvent: false
+      inFields:
+        - eventField: _httpMethod
+          lookupField: http_method
+      outFields:
+        - lookupField: event_type
+          eventField: _lkp_event_type
+        - lookupField: event_category
+          eventField: _lkp_event_category
+        - lookupField: security_relevant
+          eventField: _lkp_security_relevant
+        - lookupField: risk_level
+          eventField: _lkp_risk_level
+        - lookupField: mitre_tactic
+          eventField: _lkp_mitre_tactic
+        - lookupField: mitre_technique_id
+          eventField: _lkp_mitre_technique_id
+        - lookupField: mitre_technique_name
+          eventField: _lkp_mitre_technique_name
+
+  # ── Noise Suppression: dedup repetitive API GET polling ──
+
+  - id: suppress
+    filter: "C.vars['suppress_api_polling'] && _httpMethod === 'GET'"
+    disabled: false
+    conf:
+      allow: 1
+      suppressPeriodSec: "C.vars['api_suppression_window_sec'] || 300"
+      keyExpr: "`${_userName}:${_restEndpoint}`"
+    description: "Suppress repetitive GET polling by same user to same endpoint"
+
+  # ── Stage 2: ASIM AuditEvent Mapping ──
+
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: EventVendor
+          value: "'Nutanix'"
+        - disabled: false
+          name: EventProduct
+          value: "'Prism'"
+        - disabled: false
+          name: EventSchema
+          value: "'AuditEvent'"
+        - disabled: false
+          name: EventSchemaVersion
+          value: "'0.1.2'"
+        - disabled: false
+          name: EventCount
+          value: "1"
+        - disabled: false
+          name: TimeGenerated
+          value: "C.Time.strftime(_time, '%Y-%m-%dT%H:%M:%S.%LZ')"
+        - disabled: false
+          name: EventType
+          value: "_lkp_event_type || 'Other'"
+        - disabled: false
+          name: EventResult
+          value: "'Success'"
+        - disabled: false
+          name: EventSeverity
+          value: "_lkp_risk_level === 'high' ? 'High' : _lkp_risk_level === 'medium' ? 'Medium' : 'Informational'"
+        - disabled: false
+          name: EventOriginalType
+          value: "appname || ''"
+        - disabled: false
+          name: EventCategory
+          value: "_lkp_event_category || 'API Access'"
+        - disabled: false
+          name: Dvc
+          value: "host || ''"
+        - disabled: false
+          name: DvcHostname
+          value: "host || ''"
+        - disabled: false
+          name: ActorUsername
+          value: "_userName || ''"
+        - disabled: false
+          name: SrcIpAddr
+          value: "''"
+        - disabled: false
+          name: ActorSessionId
+          value: "''"
+        - disabled: false
+          name: AccessMethod
+          value: "_clientType || 'API'"
+        - disabled: false
+          name: Operation
+          value: "(_httpMethod || '') + ' ' + (_restEndpoint || '')"
+        - disabled: false
+          name: Object
+          value: "_entityUuid ? _restEndpoint + ' [' + _entityUuid + ']' : _restEndpoint || ''"
+        - disabled: false
+          name: ObjectType
+          value: "'Cloud Resource'"
+        - disabled: false
+          name: OldValue
+          value: "_queryParams && _queryParams.trim() && _queryParams !== \"b''\" ? _queryParams : ''"
+        - disabled: false
+          name: NewValue
+          value: "_payload && _payload.trim() ? _payload : ''"
+        - disabled: false
+          name: SecurityAlert
+          value: "_loginAttempt === 'True' || _lkp_security_relevant === 'true' || _lkp_security_relevant === true || _httpMethod === 'PUT' || _httpMethod === 'DELETE'"
+        - disabled: false
+          name: RiskLevel
+          value: "_lkp_risk_level || 'info'"
+        - disabled: false
+          name: MitreTactic
+          value: "_lkp_mitre_tactic && _lkp_mitre_tactic !== '-' ? _lkp_mitre_tactic : ''"
+        - disabled: false
+          name: MitreTechniqueId
+          value: "_lkp_mitre_technique_id && _lkp_mitre_technique_id !== '-' ? _lkp_mitre_technique_id : ''"
+        - disabled: false
+          name: MitreTechniqueName
+          value: "_lkp_mitre_technique_name && _lkp_mitre_technique_name !== '-' ? _lkp_mitre_technique_name : ''"
+
+  # ── MITRE Enrichment Control ──
+
+  - id: eval
+    filter: "C.vars['enable_mitre_enrichment'] === 'off'"
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: MitreTactic
+          value: "''"
+        - disabled: false
+          name: MitreTechniqueId
+          value: "''"
+        - disabled: false
+          name: MitreTechniqueName
+          value: "''"
+
+  - id: eval
+    filter: "C.vars['enable_mitre_enrichment'] === 'security_only' && !SecurityAlert"
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: MitreTactic
+          value: "''"
+        - disabled: false
+          name: MitreTechniqueId
+          value: "''"
+        - disabled: false
+          name: MitreTechniqueName
+          value: "''"
+
+  # ── Event Filter ──
+
+  - id: drop
+    filter: "C.vars['event_filter'] === 'security' && !SecurityAlert && EventType !== 'Create' && EventType !== 'Delete' && EventType !== 'Set'"
+    disabled: false
+    conf: {}
+    description: "Security mode: drop non-security, non-config events"
+
+  - id: drop
+    filter: "C.vars['event_filter'] === 'operational' && (SecurityAlert || EventType === 'Create' || EventType === 'Delete' || EventType === 'Set')"
+    disabled: false
+    conf: {}
+    description: "Operational mode: drop security and config events"
+
+  # ── Stage 3: Output Mode ──
+
+  - id: eval
+    filter: "C.vars['output_mode'] === 'asim_only'"
+    disabled: false
+    conf:
+      keep:
+        - EventVendor
+        - EventProduct
+        - EventSchema
+        - EventSchemaVersion
+        - EventCount
+        - TimeGenerated
+        - EventType
+        - EventResult
+        - EventSeverity
+        - EventOriginalType
+        - EventCategory
+        - Dvc
+        - DvcHostname
+        - ActorUsername
+        - SrcIpAddr
+        - ActorSessionId
+        - AccessMethod
+        - Operation
+        - Object
+        - ObjectType
+        - OldValue
+        - NewValue
+        - SecurityAlert
+        - RiskLevel
+        - MitreTactic
+        - MitreTechniqueId
+        - MitreTechniqueName
+      remove:
+        - "*"
+
+  - id: eval
+    filter: "C.vars['output_mode'] !== 'asim_only'"
+    disabled: false
+    conf:
+      remove:
+        - message
+        - _nutanix_source
+        - _clientType
+        - _userName
+        - _apiVersion
+        - _httpMethod
+        - _restEndpoint
+        - _entityUuid
+        - _queryParams
+        - _payload
+        - _loginAttempt
+        - _lkp_event_type
+        - _lkp_event_category
+        - _lkp_security_relevant
+        - _lkp_risk_level
+        - _lkp_mitre_tactic
+        - _lkp_mitre_technique_id
+        - _lkp_mitre_technique_name
+
+  - id: eval
+    filter: "C.vars['output_mode'] !== 'asim_only' && C.vars['raw_handling'] === 'truncate'"
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: _raw
+          value: "_raw.substring(0, 256)"
+
+  - id: eval
+    filter: "C.vars['output_mode'] !== 'asim_only' && C.vars['raw_handling'] === 'remove'"
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: _raw
+          value: "undefined"
+description: >-
+  Nutanix API audit pipeline for CVM REST API events (api_audit and
+  api_audit_v3). Parses pipe-delimited fields including clientType, userName,
+  httpMethod, restEndpoint, entityUuid, queryParams, and payload. Enriches
+  with MITRE ATT&CK mappings by HTTP method via lookup. Suppresses repetitive
+  GET polling noise. Normalizes to 27-field ASIM AuditEvent schema with
+  configurable output mode.

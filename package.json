@@ -1,13 +1,57 @@
 {
   "name": "nutanix-asim",
-  "version": "1.0.0",
+  "version": "2.1.0",
   "displayName": "Nutanix ASIM Normalizer",
-  "description": "Normalizes Nutanix AHV syslog events to Microsoft Sentinel ASIM AuditEvent schema with data reduction capabilities.",
+  "description": "Cribl pack for Nutanix Prism Central consolidated audit and CVM API audit events (local0 facility). Parses JSON audit messages, enriches with alertUid-based lookup for ASIM field mapping, MITRE ATT&CK enrichment, and security classification. Drops audit-alert_manager debug noise. Normalizes to Microsoft Sentinel ASIM AuditEvent schema with configurable output modes and data reduction.",
   "author": "Nathan Bray",
   "tags": {
-    "streamtags": ["nutanix", "asim", "sentinel", "syslog", "audit"],
+    "streamtags": ["nutanix", "asim", "sentinel", "syslog", "audit", "security", "mitre"],
     "dataType": ["logs"],
-    "useCase": ["normalization", "reduction"]
+    "useCase": ["normalization", "enrichment", "security", "reduction"]
   },
-  "minVersion": "4.0.0"
+  "minVersion": "4.0.0",
+  "parameters": [
+    {
+      "name": "output_mode",
+      "type": "string",
+      "label": "Output Mode",
+      "description": "Controls output field set. 'asim_only' keeps only the 27 ASIM AuditEvent fields (maximum data reduction). 'enriched' keeps ASIM fields alongside all vendor-specific extracted fields.",
+      "default": "asim_only"
+    },
+    {
+      "name": "raw_handling",
+      "type": "string",
+      "label": "Raw Event Handling",
+      "description": "Control _raw field after field extraction. 'keep' preserves the original, 'truncate' keeps first 256 characters, 'remove' drops _raw entirely.",
+      "default": "remove"
+    },
+    {
+      "name": "enable_mitre_enrichment",
+      "type": "string",
+      "label": "MITRE ATT&CK Enrichment",
+      "description": "Control when MITRE ATT&CK fields are added. 'all' enriches every event, 'security_only' enriches only security-relevant events, 'off' disables MITRE enrichment.",
+      "default": "security_only"
+    },
+    {
+      "name": "event_filter",
+      "type": "string",
+      "label": "Event Filter",
+      "description": "Filter events by category. 'all' emits everything. 'security' keeps only security alerts and config changes. 'operational' keeps only non-security operational events.",
+      "default": "all"
+    },
+    {
+      "name": "suppress_api_polling",
+      "type": "boolean",
+      "label": "Suppress API Polling",
+      "description": "Suppress repetitive API GET polling from automated integrations (Dynatrace, monitoring). Deduplicates by user and endpoint over the suppression window.",
+      "default": false
+    },
+    {
+      "name": "api_suppression_window_sec",
+      "type": "number",
+      "label": "API Suppression Window (seconds)",
+      "description": "Time window in seconds for API GET polling deduplication. Only applies when Suppress API Polling is enabled.",
+      "default": 300
+    }
+  ]
 }

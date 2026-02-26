@@ -1,0 +1,31 @@
+[
+  {
+    "TimeGenerated": "2026-02-16T18:27:37.611Z",
+    "EventVendor": "Nutanix",
+    "EventProduct": "Prism Central",
+    "EventSchema": "AuditEvent",
+    "EventSchemaVersion": "0.1.2",
+    "EventCount": 1,
+    "EventType": "Set",
+    "EventResult": "Success",
+    "EventSeverity": "Medium",
+    "EventOriginalType": "IAMAdministrationEventAudit",
+    "EventCategory": "IAM",
+    "Dvc": "NTNX-10-150-30-12-A-PCVM",
+    "DvcHostname": "NTNX-10-150-30-12-A-PCVM",
+    "ActorUsername": "nathan.bray-p@brightspeed.com",
+    "SrcIpAddr": "",
+    "ActorSessionId": "1180123b-2214-43d6-9c34-7300bd475ac9",
+    "AccessMethod": "API",
+    "Operation": "Update",
+    "Object": "nathan.bray-p@brightspeed.com",
+    "ObjectType": "Policy Rule",
+    "OldValue": "",
+    "NewValue": "User nathan.bray-p@brightspeed.com granted permission to [('View_App',)] on app with attributes ['uuid': '993d03d3-ff4d-44a0-af96-44f1f6f4d537', 'project_uuid': ['6c919cde-7637-4c3a-a881-18dfea5494f0'], 'owner_uuid': '00000000-0000-0000-0000-000000000000', 'category_uuid': ['2686b4ba-2eee-5f06-bdbc-dc219dd61a06', 'eb8b4155-b3d1-5772-8d2f-d566d43d8e46']] from",
+    "SecurityAlert": true,
+    "RiskLevel": "medium",
+    "MitreTactic": "Persistence",
+    "MitreTechniqueId": "T1098",
+    "MitreTechniqueName": "Account Manipulation"
+  }
+]

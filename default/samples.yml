@@ -1,0 +1,24 @@
+ntxIAM:
+  sampleName: nutanix_iam_events.json
+  description: Nutanix Prism Central IAM administration events (IAMAdministrationEventAudit) - permission grants, session creation
+  created: 1739500800000
+  size: 9105
+  numEvents: 4
+ntxLogin:
+  sampleName: nutanix_login_events.json
+  description: Nutanix Prism Central login events (LoginInfoAudit) - user authentication
+  created: 1739500800000
+  size: 2084
+  numEvents: 1
+ntxVmOps:
+  sampleName: nutanix_vm_operations.json
+  description: Nutanix Prism Central VM operations (PowerOn, PowerOff, AcpiShutdown, DiskUpdate, PowerStateReconcile)
+  created: 1739500800000
+  size: 10320
+  numEvents: 5
+ntxNoise:
+  sampleName: nutanix_noise_dropped.json
+  description: Nutanix audit-alert_manager debug logs (dropped by source_detect pipeline as noise)
+  created: 1739500800000
+  size: 10428
+  numEvents: 2

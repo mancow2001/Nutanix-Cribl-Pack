@@ -1,0 +1,13 @@
+[
+  {
+    "message": "{\"affectedEntityList\":[{\"entityType\":\"IAM\",\"name\":\"nathan.bray-p@brightspeed.com\",\"uuid\":\"nathan.bray-p@brightspeed.com\"}],\"alertUid\":\"LoginInfoAudit\",\"classificationList\":[\"UserAction\"],\"clientIp\":\"\",\"creationTimestampUsecs\":\"1771295271663407\",\"defaultMsg\":\"User nathan.bray-p@brightspeed.com has logged in from 10.143.14.222\",\"opEndTimestampUsecs\":\"1771295271000000\",\"opStartTimestampUsecs\":\"1771295271000000\",\"operationType\":\"Login\",\"originatingClusterUuid\":\"b8175c41-4363-49a5-82bb-c279ac1061d9\",\"params\":{\"audit_user\":\"nathan.bray-p@brightspeed.com\",\"ip_address\":\"10.143.14.222\",\"operation_type\":\"login\"},\"recordType\":\"Audit\",\"sessionId\":\"\",\"severity\":\"Audit\",\"tenantUuid\":\"\",\"userName\":\"nathan.bray-p@brightspeed.com\",\"userUuid\":\"\",\"uuid\":\"33c12bdd-80e3-4d48-745c-db17ee707093\"}",
+    "severity": 6,
+    "facility": 16,
+    "host": "NTNX-10-150-30-15-A-PCVM",
+    "appname": "consolidated_audit",
+    "severityName": "info",
+    "facilityName": "local0",
+    "_time": 1771295277.642,
+    "_raw": "<134>2026-02-16T18:27:57.642362-08:00 NTNX-10-150-30-15-A-PCVM consolidated_audit: {\"affectedEntityList\":[{\"entityType\":\"IAM\",\"name\":\"nathan.bray-p@brightspeed.com\",\"uuid\":\"nathan.bray-p@brightspeed.com\"}],\"alertUid\":\"LoginInfoAudit\",\"classificationList\":[\"UserAction\"],\"clientIp\":\"\",\"creationTimestampUsecs\":\"1771295271663407\",\"defaultMsg\":\"User nathan.bray-p@brightspeed.com has logged in from 10.143.14.222\",\"opEndTimestampUsecs\":\"1771295271000000\",\"opStartTimestampUsecs\":\"1771295271000000\",\"operationType\":\"Login\",\"originatingClusterUuid\":\"b8175c41-4363-49a5-82bb-c279ac1061d9\",\"params\":{\"audit_user\":\"nathan.bray-p@brightspeed.com\",\"ip_address\":\"10.143.14.222\",\"operation_type\":\"login\"},\"recordType\":\"Audit\",\"sessionId\":\"\",\"severity\":\"Audit\",\"tenantUuid\":\"\",\"userName\":\"nathan.bray-p@brightspeed.com\",\"userUuid\":\"\",\"uuid\":\"33c12bdd-80e3-4d48-745c-db17ee707093\"}"
+  }
+]

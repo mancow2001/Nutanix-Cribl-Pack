@@ -1,0 +1,57 @@
+[
+  {
+    "message": "{\"affectedEntityList\":[{\"entityType\":\"vm\",\"name\":\"pe1apw11cct2905\",\"uuid\":\"1aa4922e-3293-4da8-b611-1aaeb6f2dde8\"},{\"entityType\":\"host\",\"name\":\"pe1ntctxnp2n01\",\"uuid\":\"b069912f-8253-44a3-ba97-aa58f262f143\"}],\"alertUid\":\"VmPowerOnAudit\",\"classificationList\":[\"UserAction\"],\"clientIp\":\"10.150.10.12\",\"creationTimestampUsecs\":\"1771295236954782\",\"defaultMsg\":\"Powered on VM pe1apw11cct2905\",\"opEndTimestampUsecs\":\"1771295236946843\",\"opStartTimestampUsecs\":\"1771295229599453\",\"operationType\":\"PowerStateChange\",\"originatingClusterUuid\":\"00063315-b8d9-7b89-4d5c-7cc255e94b5e\",\"params\":{\"vm_name\":\"pe1apw11cct2905\"},\"recordType\":\"Audit\",\"sessionId\":\"556e4f93-aed4-4031-b675-1cf77a98dd00\",\"severity\":\"Audit\",\"userName\":\"bs-ctx-cloud-connect\",\"uuid\":\"84238c7c-9c51-4a2b-b750-f5f9541a2eca\"}",
+    "severity": 6,
+    "facility": 16,
+    "host": "NTNX-25SH5U130005-A-CVM",
+    "appname": "consolidated_audit",
+    "severityName": "info",
+    "facilityName": "local0",
+    "_time": 1771295261.649,
+    "_raw": "<134>2026-02-16T21:27:41.649409-05:00 NTNX-25SH5U130005-A-CVM consolidated_audit: {\"affectedEntityList\":[{\"entityType\":\"vm\",\"name\":\"pe1apw11cct2905\",\"uuid\":\"1aa4922e-3293-4da8-b611-1aaeb6f2dde8\"},{\"entityType\":\"host\",\"name\":\"pe1ntctxnp2n01\",\"uuid\":\"b069912f-8253-44a3-ba97-aa58f262f143\"}],\"alertUid\":\"VmPowerOnAudit\",\"classificationList\":[\"UserAction\"],\"clientIp\":\"10.150.10.12\",\"creationTimestampUsecs\":\"1771295236954782\",\"defaultMsg\":\"Powered on VM pe1apw11cct2905\",\"opEndTimestampUsecs\":\"1771295236946843\",\"opStartTimestampUsecs\":\"1771295229599453\",\"operationType\":\"PowerStateChange\",\"originatingClusterUuid\":\"00063315-b8d9-7b89-4d5c-7cc255e94b5e\",\"params\":{\"vm_name\":\"pe1apw11cct2905\"},\"recordType\":\"Audit\",\"sessionId\":\"556e4f93-aed4-4031-b675-1cf77a98dd00\",\"severity\":\"Audit\",\"userName\":\"bs-ctx-cloud-connect\",\"uuid\":\"84238c7c-9c51-4a2b-b750-f5f9541a2eca\"}"
+  },
+  {
+    "message": "{\"affectedEntityList\":[{\"entityType\":\"vm\",\"name\":\"pe1apw10pdvp291\",\"uuid\":\"6ab7bfdd-01b3-4d1c-a3a3-c4b35855c428\"}],\"alertUid\":\"VmPowerOffAudit\",\"classificationList\":[\"UserAction\"],\"clientIp\":\"10.150.10.13\",\"creationTimestampUsecs\":\"1771295259785680\",\"defaultMsg\":\"Powered off VM pe1apw10pdvp291\",\"opEndTimestampUsecs\":\"1771295259783664\",\"opStartTimestampUsecs\":\"1771295257999834\",\"operationType\":\"PowerStateChange\",\"originatingClusterUuid\":\"00062722-e0a2-e6f6-3486-7cc25589d8c9\",\"params\":{\"vm_name\":\"pe1apw10pdvp291\"},\"recordType\":\"Audit\",\"sessionId\":\"3ea0c661-d932-42c4-95e3-5a367c15b484\",\"severity\":\"Audit\",\"userName\":\"bs-ctx-cloud-connect\",\"uuid\":\"bc884044-dd3f-4e71-99f8-10d57afcaf8a\"}",
+    "severity": 6,
+    "facility": 16,
+    "host": "NTNX-24SH5R310260-A-CVM",
+    "appname": "consolidated_audit",
+    "severityName": "info",
+    "facilityName": "local0",
+    "_time": 1771295282.7,
+    "_raw": "<134>2026-02-16T21:28:02.700062-05:00 NTNX-24SH5R310260-A-CVM consolidated_audit: {\"affectedEntityList\":[{\"entityType\":\"vm\",\"name\":\"pe1apw10pdvp291\",\"uuid\":\"6ab7bfdd-01b3-4d1c-a3a3-c4b35855c428\"}],\"alertUid\":\"VmPowerOffAudit\",\"classificationList\":[\"UserAction\"],\"clientIp\":\"10.150.10.13\",\"creationTimestampUsecs\":\"1771295259785680\",\"defaultMsg\":\"Powered off VM pe1apw10pdvp291\",\"opEndTimestampUsecs\":\"1771295259783664\",\"opStartTimestampUsecs\":\"1771295257999834\",\"operationType\":\"PowerStateChange\",\"originatingClusterUuid\":\"00062722-e0a2-e6f6-3486-7cc25589d8c9\",\"params\":{\"vm_name\":\"pe1apw10pdvp291\"},\"recordType\":\"Audit\",\"sessionId\":\"3ea0c661-d932-42c4-95e3-5a367c15b484\",\"severity\":\"Audit\",\"userName\":\"bs-ctx-cloud-connect\",\"uuid\":\"bc884044-dd3f-4e71-99f8-10d57afcaf8a\"}"
+  },
+  {
+    "message": "{\"affectedEntityList\":[{\"entityType\":\"vm\",\"name\":\"pe1apw11cct1874\",\"uuid\":\"c89ee593-ebbc-4d47-a816-65ed730b61ce\"}],\"alertUid\":\"VmAcpiShutdownAudit\",\"classificationList\":[\"UserAction\"],\"clientIp\":\"10.150.10.14\",\"creationTimestampUsecs\":\"1771295251739768\",\"defaultMsg\":\"ACPI shutdown VM pe1apw11cct1874\",\"opEndTimestampUsecs\":\"1771295251732773\",\"opStartTimestampUsecs\":\"1771295251378179\",\"operationType\":\"PowerStateChange\",\"originatingClusterUuid\":\"0006253b-d98f-dd8f-1cb2-7cc25589dfe5\",\"params\":{\"vm_name\":\"pe1apw11cct1874\"},\"recordType\":\"Audit\",\"sessionId\":\"8c48dadc-773b-46df-aaaa-49b991742c59\",\"severity\":\"Audit\",\"userName\":\"bs-ctx-cloud-connect\",\"uuid\":\"8711f541-9c10-4cf3-846a-6d4c5472f1df\"}",
+    "severity": 6,
+    "facility": 16,
+    "host": "NTNX-24SH5R320013-A-CVM",
+    "appname": "consolidated_audit",
+    "severityName": "info",
+    "facilityName": "local0",
+    "_time": 1771295262.062,
+    "_raw": "<134>2026-02-17T02:27:42.062702+00:00 NTNX-24SH5R320013-A-CVM consolidated_audit: {\"affectedEntityList\":[{\"entityType\":\"vm\",\"name\":\"pe1apw11cct1874\",\"uuid\":\"c89ee593-ebbc-4d47-a816-65ed730b61ce\"}],\"alertUid\":\"VmAcpiShutdownAudit\",\"classificationList\":[\"UserAction\"],\"clientIp\":\"10.150.10.14\",\"creationTimestampUsecs\":\"1771295251739768\",\"defaultMsg\":\"ACPI shutdown VM pe1apw11cct1874\",\"opEndTimestampUsecs\":\"1771295251732773\",\"opStartTimestampUsecs\":\"1771295251378179\",\"operationType\":\"PowerStateChange\",\"originatingClusterUuid\":\"0006253b-d98f-dd8f-1cb2-7cc25589dfe5\",\"params\":{\"vm_name\":\"pe1apw11cct1874\"},\"recordType\":\"Audit\",\"sessionId\":\"8c48dadc-773b-46df-aaaa-49b991742c59\",\"severity\":\"Audit\",\"userName\":\"bs-ctx-cloud-connect\",\"uuid\":\"8711f541-9c10-4cf3-846a-6d4c5472f1df\"}"
+  },
+  {
+    "message": "{\"affectedEntityList\":[{\"entityType\":\"vm\",\"name\":\"pe1apw11cct2964\",\"uuid\":\"3897acac-0ee5-4ca4-949a-c21ce3020eb7\"},{\"entityType\":\"virtual_disk\",\"name\":\"scsi.0\",\"uuid\":\"9bfc231b-cff1-4070-b779-e38cf3aac64f\"},{\"entityType\":\"container\",\"name\":\"default-container-90071755998864\",\"uuid\":\"2b1426c4-d841-4d01-bab5-784af4807ce7\"},{\"entityType\":\"virtual_disk\",\"name\":\"scsi.0\",\"uuid\":\"1040d3c8-c1c4-42c7-9139-5ea01838c56e\"}],\"alertUid\":\"VmDiskUpdateAudit\",\"classificationList\":[\"UserAction\"],\"clientIp\":\"10.150.10.15\",\"creationTimestampUsecs\":\"1771295270861813\",\"defaultMsg\":\"Updated disk scsi.0 of VM pe1apw11cct2964\",\"opEndTimestampUsecs\":\"1771295270853249\",\"opStartTimestampUsecs\":\"1771295270373762\",\"operationType\":\"Update\",\"originatingClusterUuid\":\"00063315-b8d9-7b89-4d5c-7cc255e94b5e\",\"params\":{\"disk_address\":\"scsi.0\",\"size_bytes\":\"274877906944\",\"source_disk_uuid\":\"1040d3c8-c1c4-42c7-9139-5ea01838c56e\",\"vm_name\":\"pe1apw11cct2964\"},\"recordType\":\"Audit\",\"sessionId\":\"c9532f52-4e5f-4f70-aeda-529099125fe2\",\"severity\":\"Audit\",\"userName\":\"bs-ctx-cloud-connect\",\"uuid\":\"2bb61b92-6e9f-4c01-810d-2401bfbd34f6\"}",
+    "severity": 6,
+    "facility": 16,
+    "host": "NTNX-25SH5U130005-A-CVM",
+    "appname": "consolidated_audit",
+    "severityName": "info",
+    "facilityName": "local0",
+    "_time": 1771295271.659,
+    "_raw": "<134>2026-02-16T21:27:51.659628-05:00 NTNX-25SH5U130005-A-CVM consolidated_audit: {\"affectedEntityList\":[{\"entityType\":\"vm\",\"name\":\"pe1apw11cct2964\",\"uuid\":\"3897acac-0ee5-4ca4-949a-c21ce3020eb7\"},{\"entityType\":\"virtual_disk\",\"name\":\"scsi.0\",\"uuid\":\"9bfc231b-cff1-4070-b779-e38cf3aac64f\"},{\"entityType\":\"container\",\"name\":\"default-container-90071755998864\",\"uuid\":\"2b1426c4-d841-4d01-bab5-784af4807ce7\"},{\"entityType\":\"virtual_disk\",\"name\":\"scsi.0\",\"uuid\":\"1040d3c8-c1c4-42c7-9139-5ea01838c56e\"}],\"alertUid\":\"VmDiskUpdateAudit\",\"classificationList\":[\"UserAction\"],\"clientIp\":\"10.150.10.15\",\"creationTimestampUsecs\":\"1771295270861813\",\"defaultMsg\":\"Updated disk scsi.0 of VM pe1apw11cct2964\",\"opEndTimestampUsecs\":\"1771295270853249\",\"opStartTimestampUsecs\":\"1771295270373762\",\"operationType\":\"Update\",\"originatingClusterUuid\":\"00063315-b8d9-7b89-4d5c-7cc255e94b5e\",\"params\":{\"disk_address\":\"scsi.0\",\"size_bytes\":\"274877906944\",\"source_disk_uuid\":\"1040d3c8-c1c4-42c7-9139-5ea01838c56e\",\"vm_name\":\"pe1apw11cct2964\"},\"recordType\":\"Audit\",\"sessionId\":\"c9532f52-4e5f-4f70-aeda-529099125fe2\",\"severity\":\"Audit\",\"userName\":\"bs-ctx-cloud-connect\",\"uuid\":\"2bb61b92-6e9f-4c01-810d-2401bfbd34f6\"}"
+  },
+  {
+    "message": "{\"affectedEntityList\":[{\"entityType\":\"vm\",\"name\":\"pe1apw11cct1889\",\"uuid\":\"12299ebe-f3bb-4629-84ef-d4a0e2a22b59\"}],\"alertUid\":\"VmPowerStateReconcileAudit\",\"classificationList\":[\"UserAction\"],\"creationTimestampUsecs\":\"1771295254822879\",\"defaultMsg\":\"VM pe1apw11cct1889 power state has changed to Off\",\"opEndTimestampUsecs\":\"1771295254798556\",\"opStartTimestampUsecs\":\"1771295254113777\",\"operationType\":\"PowerStateChange\",\"originatingClusterUuid\":\"0006253b-d98f-dd8f-1cb2-7cc25589dfe5\",\"params\":{\"state\":\"Off\",\"vm_name\":\"pe1apw11cct1889\"},\"recordType\":\"Audit\",\"severity\":\"Audit\",\"userName\":\"System\",\"uuid\":\"fc04ddff-2fd5-45c0-a811-23216bafa770\"}",
+    "severity": 6,
+    "facility": 16,
+    "host": "NTNX-24SH5R320013-A-CVM",
+    "appname": "consolidated_audit",
+    "severityName": "info",
+    "facilityName": "local0",
+    "_time": 1771295262.064,
+    "_raw": "<134>2026-02-17T02:27:42.064905+00:00 NTNX-24SH5R320013-A-CVM consolidated_audit: {\"affectedEntityList\":[{\"entityType\":\"vm\",\"name\":\"pe1apw11cct1889\",\"uuid\":\"12299ebe-f3bb-4629-84ef-d4a0e2a22b59\"}],\"alertUid\":\"VmPowerStateReconcileAudit\",\"classificationList\":[\"UserAction\"],\"creationTimestampUsecs\":\"1771295254822879\",\"defaultMsg\":\"VM pe1apw11cct1889 power state has changed to Off\",\"opEndTimestampUsecs\":\"1771295254798556\",\"opStartTimestampUsecs\":\"1771295254113777\",\"operationType\":\"PowerStateChange\",\"originatingClusterUuid\":\"0006253b-d98f-dd8f-1cb2-7cc25589dfe5\",\"params\":{\"state\":\"Off\",\"vm_name\":\"pe1apw11cct1889\"},\"recordType\":\"Audit\",\"severity\":\"Audit\",\"userName\":\"System\",\"uuid\":\"fc04ddff-2fd5-45c0-a811-23216bafa770\"}"
+  }
+]

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Log Analytics workspace where the custom table will be created."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/tables",
+      "apiVersion": "2022-10-01",
+      "name": "[concat(parameters('workspaceName'), '/NutanixAuditEvent_CL')]",
+      "properties": {
+        "schema": {
+          "name": "NutanixAuditEvent_CL",
+          "columns": [
+            { "name": "TimeGenerated", "type": "datetime", "description": "Event timestamp in ISO 8601 format. Required by Log Analytics." },
+            { "name": "EventVendor", "type": "string", "description": "Vendor name: Nutanix." },
+            { "name": "EventProduct", "type": "string", "description": "Product name: AHV, Prism, or Prism Central." },
+            { "name": "EventSchema", "type": "string", "description": "ASIM schema name: AuditEvent." },
+            { "name": "EventSchemaVersion", "type": "string", "description": "ASIM schema version: 0.1.2." },
+            { "name": "EventCount", "type": "int", "description": "Number of events aggregated (always 1)." },
+            { "name": "EventType", "type": "string", "description": "ASIM event type: Create, Delete, Set, Execute, Enable, Disable, Read, or Other." },
+            { "name": "EventResult", "type": "string", "description": "Event outcome: Success, Failure, or NA." },
+            { "name": "EventSeverity", "type": "string", "description": "Normalized severity: High, Medium, Low, or Informational." },
+            { "name": "EventOriginalType", "type": "string", "description": "Raw event type from the source (audit_type, appname, or alertUid)." },
+            { "name": "EventCategory", "type": "string", "description": "Event category from lookup or source type." },
+            { "name": "Dvc", "type": "string", "description": "Device identifier (hostname)." },
+            { "name": "DvcHostname", "type": "string", "description": "Device hostname." },
+            { "name": "ActorUsername", "type": "string", "description": "User who performed the action." },
+            { "name": "SrcIpAddr", "type": "string", "description": "Source IP address of the actor." },
+            { "name": "ActorSessionId", "type": "string", "description": "Session identifier." },
+            { "name": "AccessMethod", "type": "string", "description": "Access method: auditd, API, or browser info." },
+            { "name": "Operation", "type": "string", "description": "Action performed on the target." },
+            { "name": "Object", "type": "string", "description": "Target of the action." },
+            { "name": "ObjectType", "type": "string", "description": "Object type: Configuration Atom, Service, Cloud Resource, Process, File, Network, Policy Rule, or Other." },
+            { "name": "OldValue", "type": "string", "description": "Previous value before a change." },
+            { "name": "NewValue", "type": "string", "description": "New value after a change." },
+            { "name": "SecurityAlert", "type": "boolean", "description": "Whether this event is a security alert." },
+            { "name": "RiskLevel", "type": "string", "description": "Risk level: critical, high, medium, low, or info." },
+            { "name": "MitreTactic", "type": "string", "description": "MITRE ATT&CK tactic name." },
+            { "name": "MitreTechniqueId", "type": "string", "description": "MITRE ATT&CK technique ID (e.g., T1098)." },
+            { "name": "MitreTechniqueName", "type": "string", "description": "MITRE ATT&CK technique name." }
+          ]
+        },
+        "retentionInDays": 90,
+        "totalRetentionInDays": 365
+      }
+    }
+  ]
+}

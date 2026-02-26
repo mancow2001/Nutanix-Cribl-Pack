@@ -1,0 +1,382 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: false
+    conf:
+      comment: >-
+        Nutanix Consolidated Audit Pipeline - Parses Prism Central consolidated
+        audit events containing JSON message bodies. Extracts alertUid,
+        operationType, userName, defaultMsg, all affected entities, clientIp,
+        sessionId, and full params including ip_address, audit_user, browser_info,
+        config_before/after, and extended params. Uses alertUid lookup for
+        ASIM field mapping, security classification, and MITRE ATT&CK enrichment.
+        Normalizes to 27-field ASIM AuditEvent schema.
+
+  # ── Stage 1: Vendor-Specific Parsing ──
+
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: _parsed
+          value: "(() => { try { const m = (message || '').trim(); const i = m.indexOf('{'); return i >= 0 ? JSON.parse(m.substring(i)) : null; } catch(e) { return null; } })()"
+
+  - id: eval
+    filter: "_parsed != null"
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: _alertUid
+          value: "_parsed.alertUid || ''"
+        - disabled: false
+          name: _operationType
+          value: "_parsed.operationType || ''"
+        - disabled: false
+          name: _userName
+          value: "_parsed.userName || ''"
+        - disabled: false
+          name: _defaultMsg
+          value: "_parsed.defaultMsg || ''"
+        - disabled: false
+          name: _auditSeverity
+          value: "_parsed.severity || ''"
+        - disabled: false
+          name: _clientIp
+          value: "_parsed.clientIp || ''"
+        - disabled: false
+          name: _sessionId
+          value: "_parsed.sessionId || ''"
+        - disabled: false
+          name: _affectedEntities
+          value: "_parsed.affectedEntityList || []"
+        - disabled: false
+          name: _params
+          value: "_parsed.params || {}"
+        - disabled: false
+          name: _ipAddress
+          value: "_parsed.params && _parsed.params.ip_address ? _parsed.params.ip_address : ''"
+        - disabled: false
+          name: _auditUser
+          value: "_parsed.params && _parsed.params.audit_user ? _parsed.params.audit_user : ''"
+        - disabled: false
+          name: _browserInfo
+          value: "_parsed.params && _parsed.params.browser_info ? _parsed.params.browser_info : ''"
+        - disabled: false
+          name: _recordUuid
+          value: "_parsed.uuid || ''"
+        - disabled: false
+          name: _classification
+          value: "_parsed.classificationList && _parsed.classificationList.length > 0 ? _parsed.classificationList.join(', ') : ''"
+        - disabled: false
+          name: _originatingCluster
+          value: "_parsed.originatingClusterUuid || ''"
+
+  # ── Extract ALL affected entities ──
+
+  - id: eval
+    filter: "_affectedEntities && _affectedEntities.length > 0"
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: _allEntityNames
+          value: "_affectedEntities.map(e => e.name).filter(Boolean).join('; ')"
+        - disabled: false
+          name: _allEntityTypes
+          value: "[...new Set(_affectedEntities.map(e => e.entityType).filter(Boolean))].join(', ')"
+        - disabled: false
+          name: _primaryEntityType
+          value: "_affectedEntities[0].entityType || ''"
+
+  # ── Extract extended params ──
+
+  - id: eval
+    filter: "_params && typeof _params === 'object'"
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: _configBefore
+          value: "_params.config_before || ''"
+        - disabled: false
+          name: _configAfter
+          value: "_params.config_after || ''"
+        - disabled: false
+          name: _extendedParams
+          value: "(() => { const skip = ['ip_address','audit_user','browser_info','config_before','config_after']; const extra = Object.keys(_params).filter(k => !skip.includes(k)).map(k => k + '=' + _params[k]); return extra.length > 0 ? extra.join('; ') : ''; })()"
+
+  # ── Lookup alertUid for ASIM mapping ──
+
+  - id: lookup
+    filter: "_alertUid != ''"
+    disabled: false
+    conf:
+      file: nutanix_audit_type_map.csv
+      matchMode: exact
+      matchType: first
+      reloadPeriodSec: 60
+      addToEvent: false
+      inFields:
+        - eventField: _alertUid
+          lookupField: alert_uid
+      outFields:
+        - lookupField: event_type
+          eventField: _lkp_event_type
+        - lookupField: object_type
+          eventField: _lkp_object_type
+        - lookupField: event_category
+          eventField: _lkp_event_category
+        - lookupField: security_relevant
+          eventField: _lkp_security_relevant
+        - lookupField: risk_level
+          eventField: _lkp_risk_level
+        - lookupField: mitre_tactic
+          eventField: _lkp_mitre_tactic
+        - lookupField: mitre_technique_id
+          eventField: _lkp_mitre_technique_id
+        - lookupField: mitre_technique_name
+          eventField: _lkp_mitre_technique_name
+        - lookupField: description
+          eventField: _lkp_description
+
+  # ── Stage 2: ASIM AuditEvent Mapping ──
+
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: EventVendor
+          value: "'Nutanix'"
+        - disabled: false
+          name: EventProduct
+          value: "'Prism Central'"
+        - disabled: false
+          name: EventSchema
+          value: "'AuditEvent'"
+        - disabled: false
+          name: EventSchemaVersion
+          value: "'0.1.2'"
+        - disabled: false
+          name: EventCount
+          value: "1"
+        - disabled: false
+          name: TimeGenerated
+          value: "C.Time.strftime(_time, '%Y-%m-%dT%H:%M:%S.%LZ')"
+        - disabled: false
+          name: EventType
+          value: "_lkp_event_type || (_operationType === 'Update' ? 'Set' : _operationType === 'Create' ? 'Create' : _operationType === 'Delete' ? 'Delete' : _operationType === 'PowerStateChange' ? 'Execute' : _operationType === 'Login' ? 'Enable' : 'Other')"
+        - disabled: false
+          name: EventResult
+          value: "'Success'"
+        - disabled: false
+          name: EventSeverity
+          value: "_lkp_risk_level === 'high' ? 'High' : _lkp_risk_level === 'critical' ? 'High' : _lkp_risk_level === 'medium' ? 'Medium' : 'Informational'"
+        - disabled: false
+          name: EventOriginalType
+          value: "_alertUid || _operationType || 'consolidated_audit'"
+        - disabled: false
+          name: EventCategory
+          value: "_lkp_event_category || 'Administration'"
+        - disabled: false
+          name: Dvc
+          value: "host || ''"
+        - disabled: false
+          name: DvcHostname
+          value: "host || ''"
+        - disabled: false
+          name: ActorUsername
+          value: "_userName || _auditUser || ''"
+        - disabled: false
+          name: SrcIpAddr
+          value: "_clientIp || _ipAddress || ''"
+        - disabled: false
+          name: ActorSessionId
+          value: "_sessionId || _recordUuid || ''"
+        - disabled: false
+          name: AccessMethod
+          value: "_browserInfo && _browserInfo.trim() ? _browserInfo : 'API'"
+        - disabled: false
+          name: Operation
+          value: "_operationType || ''"
+        - disabled: false
+          name: Object
+          value: "_allEntityNames || ''"
+        - disabled: false
+          name: ObjectType
+          value: "_lkp_object_type || (_primaryEntityType === 'IAM' ? 'Policy Rule' : _primaryEntityType === 'vm' ? 'Cloud Resource' : _primaryEntityType === 'host' ? 'Cloud Resource' : _primaryEntityType === 'Session' ? 'Policy Rule' : 'Other')"
+        - disabled: false
+          name: OldValue
+          value: "_configBefore || _extendedParams || ''"
+        - disabled: false
+          name: NewValue
+          value: "_configAfter || _defaultMsg || ''"
+        - disabled: false
+          name: SecurityAlert
+          value: "_lkp_security_relevant === 'true' || _lkp_security_relevant === true || /^(IAM|Login|Cluster)/.test(_alertUid) || /DeleteAudit$/.test(_alertUid)"
+        - disabled: false
+          name: RiskLevel
+          value: "_lkp_risk_level || 'info'"
+        - disabled: false
+          name: MitreTactic
+          value: "_lkp_mitre_tactic && _lkp_mitre_tactic !== '-' ? _lkp_mitre_tactic : ''"
+        - disabled: false
+          name: MitreTechniqueId
+          value: "_lkp_mitre_technique_id && _lkp_mitre_technique_id !== '-' ? _lkp_mitre_technique_id : ''"
+        - disabled: false
+          name: MitreTechniqueName
+          value: "_lkp_mitre_technique_name && _lkp_mitre_technique_name !== '-' ? _lkp_mitre_technique_name : ''"
+
+  # ── MITRE Enrichment Control ──
+
+  - id: eval
+    filter: "C.vars['enable_mitre_enrichment'] === 'off'"
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: MitreTactic
+          value: "''"
+        - disabled: false
+          name: MitreTechniqueId
+          value: "''"
+        - disabled: false
+          name: MitreTechniqueName
+          value: "''"
+
+  - id: eval
+    filter: "C.vars['enable_mitre_enrichment'] === 'security_only' && !SecurityAlert"
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: MitreTactic
+          value: "''"
+        - disabled: false
+          name: MitreTechniqueId
+          value: "''"
+        - disabled: false
+          name: MitreTechniqueName
+          value: "''"
+
+  # ── Event Filter ──
+
+  - id: drop
+    filter: "C.vars['event_filter'] === 'security' && !SecurityAlert && !/^(IAM|Login|Cluster)/.test(_alertUid) && !/DeleteAudit$/.test(_alertUid)"
+    disabled: false
+    conf: {}
+    description: "Security mode: drop non-security events"
+
+  - id: drop
+    filter: "C.vars['event_filter'] === 'operational' && (SecurityAlert || /^(IAM|Login|Cluster)/.test(_alertUid) || /DeleteAudit$/.test(_alertUid))"
+    disabled: false
+    conf: {}
+    description: "Operational mode: drop security events"
+
+  # ── Stage 3: Output Mode ──
+
+  - id: eval
+    filter: "C.vars['output_mode'] === 'asim_only'"
+    disabled: false
+    conf:
+      keep:
+        - EventVendor
+        - EventProduct
+        - EventSchema
+        - EventSchemaVersion
+        - EventCount
+        - TimeGenerated
+        - EventType
+        - EventResult
+        - EventSeverity
+        - EventOriginalType
+        - EventCategory
+        - Dvc
+        - DvcHostname
+        - ActorUsername
+        - SrcIpAddr
+        - ActorSessionId
+        - AccessMethod
+        - Operation
+        - Object
+        - ObjectType
+        - OldValue
+        - NewValue
+        - SecurityAlert
+        - RiskLevel
+        - MitreTactic
+        - MitreTechniqueId
+        - MitreTechniqueName
+      remove:
+        - "*"
+
+  - id: eval
+    filter: "C.vars['output_mode'] !== 'asim_only'"
+    disabled: false
+    conf:
+      remove:
+        - message
+        - _nutanix_source
+        - _parsed
+        - _alertUid
+        - _operationType
+        - _userName
+        - _defaultMsg
+        - _auditSeverity
+        - _clientIp
+        - _sessionId
+        - _affectedEntities
+        - _params
+        - _ipAddress
+        - _auditUser
+        - _browserInfo
+        - _recordUuid
+        - _classification
+        - _originatingCluster
+        - _allEntityNames
+        - _allEntityTypes
+        - _primaryEntityType
+        - _configBefore
+        - _configAfter
+        - _extendedParams
+        - _lkp_event_type
+        - _lkp_object_type
+        - _lkp_event_category
+        - _lkp_security_relevant
+        - _lkp_risk_level
+        - _lkp_mitre_tactic
+        - _lkp_mitre_technique_id
+        - _lkp_mitre_technique_name
+        - _lkp_description
+
+  - id: eval
+    filter: "C.vars['output_mode'] !== 'asim_only' && C.vars['raw_handling'] === 'truncate'"
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: _raw
+          value: "_raw.substring(0, 256)"
+
+  - id: eval
+    filter: "C.vars['output_mode'] !== 'asim_only' && C.vars['raw_handling'] === 'remove'"
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: _raw
+          value: "undefined"
+description: >-
+  Nutanix consolidated audit pipeline for Prism Central JSON audit events.
+  Parses JSON message body to extract alertUid, operationType, userName,
+  defaultMsg, clientIp, sessionId, all affected entities, and full params.
+  Uses alertUid lookup for ASIM field mapping, security classification,
+  and MITRE ATT&CK enrichment. Normalizes to 27-field ASIM AuditEvent
+  schema with configurable output mode.

@@ -1,0 +1,17 @@
+alert_uid,event_type,object_type,event_category,security_relevant,risk_level,mitre_tactic,mitre_technique_id,mitre_technique_name,description
+IAMAdministrationEventAudit,Set,Policy Rule,IAM,true,medium,Persistence,T1098,Account Manipulation,IAM permission or role change
+LoginInfoAudit,Enable,Policy Rule,Authentication,true,medium,Initial Access,T1078,Valid Accounts,User login
+VmCreateAudit,Create,Cloud Resource,Virtualization,false,info,-,-,-,VM creation
+VmPowerOnAudit,Enable,Cloud Resource,Virtualization,false,info,-,-,-,VM powered on
+VmPowerOffAudit,Disable,Cloud Resource,Virtualization,false,info,-,-,-,VM powered off
+VmAcpiShutdownAudit,Disable,Cloud Resource,Virtualization,false,info,-,-,-,VM ACPI shutdown
+VmPowerStateReconcileAudit,Other,Cloud Resource,Virtualization,false,info,-,-,-,VM power state reconciliation
+VmDiskUpdateAudit,Set,Cloud Resource,Virtualization,false,info,-,-,-,VM disk configuration change
+VmMigrateAudit,Other,Cloud Resource,Virtualization,false,info,-,-,-,VM live migration
+VmDeleteAudit,Delete,Cloud Resource,Virtualization,true,high,Impact,T1485,Data Destruction,VM deletion
+VmSnapshotCreateAudit,Create,Cloud Resource,Virtualization,false,info,-,-,-,VM snapshot created
+VmSnapshotDeleteAudit,Delete,Cloud Resource,Virtualization,false,medium,-,-,-,VM snapshot deleted
+VmUpdateAudit,Set,Cloud Resource,Virtualization,false,info,-,-,-,VM configuration update
+ClusterCreateAudit,Create,Cloud Resource,Administration,true,high,Persistence,T1136,Create Account,Cluster creation
+ClusterUpdateAudit,Set,Cloud Resource,Administration,true,medium,Persistence,T1098,Account Manipulation,Cluster configuration change
+ClusterDeleteAudit,Delete,Cloud Resource,Administration,true,high,Impact,T1485,Data Destruction,Cluster deletion
