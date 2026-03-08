@@ -24,7 +24,7 @@ functions:
       add:
         - disabled: false
           name: _parsed
-          value: "(() => { try { const m = (message || '').trim(); const i = m.indexOf('{'); return i >= 0 ? JSON.parse(m.substring(i)) : null; } catch(e) { return null; } })()"
+          value: "(message || '').indexOf('{') >= 0 ? JSON.parse((message || '').substring((message || '').indexOf('{'))) : null"
 
   - id: eval
     filter: "_parsed != null"
@@ -79,20 +79,22 @@ functions:
 
   # ── Extract ALL affected entities ──
 
-  - id: eval
+  - id: code
     filter: "_affectedEntities && _affectedEntities.length > 0"
     disabled: false
     conf:
-      add:
-        - disabled: false
-          name: _allEntityNames
-          value: "_affectedEntities.map(e => e.name).filter(Boolean).join('; ')"
-        - disabled: false
-          name: _allEntityTypes
-          value: "[...new Set(_affectedEntities.map(e => e.entityType).filter(Boolean))].join(', ')"
-        - disabled: false
-          name: _primaryEntityType
-          value: "_affectedEntities[0].entityType || ''"
+      maxNumOfIterations: 5000
+      code: |-
+        const entities = __e._affectedEntities || [];
+        const names = [];
+        const typeSet = {};
+        for (let i = 0; i < entities.length; i++) {
+          if (entities[i].name) names.push(entities[i].name);
+          if (entities[i].entityType) typeSet[entities[i].entityType] = true;
+        }
+        __e._allEntityNames = names.join('; ');
+        __e._allEntityTypes = Object.keys(typeSet).join(', ');
+        __e._primaryEntityType = entities[0].entityType || '';
 
   # ── Extract extended params ──
 
@@ -107,9 +109,23 @@ functions:
         - disabled: false
           name: _configAfter
           value: "_params.config_after || ''"
-        - disabled: false
-          name: _extendedParams
-          value: "(() => { const skip = ['ip_address','audit_user','browser_info','config_before','config_after']; const extra = Object.keys(_params).filter(k => !skip.includes(k)).map(k => k + '=' + _params[k]); return extra.length > 0 ? extra.join('; ') : ''; })()"
+
+  - id: code
+    filter: "_params && typeof _params === 'object'"
+    disabled: false
+    conf:
+      maxNumOfIterations: 5000
+      code: |-
+        const skip = ['ip_address','audit_user','browser_info','config_before','config_after'];
+        const params = __e._params || {};
+        const keys = Object.keys(params);
+        const extra = [];
+        for (let i = 0; i < keys.length; i++) {
+          if (skip.indexOf(keys[i]) === -1) {
+            extra.push(keys[i] + '=' + params[keys[i]]);
+          }
+        }
+        __e._extendedParams = extra.join('; ');
 
   # ── Lookup alertUid for ASIM mapping ──
 

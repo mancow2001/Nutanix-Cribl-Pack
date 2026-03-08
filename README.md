@@ -110,11 +110,23 @@ route.yml ─────► nutanix_source_detect
 
 ## Installation
 
-1. Import the pack into your Cribl Stream instance
-2. Configure pack parameters (output_mode, raw_handling, etc.)
-3. Attach the pack route to your Nutanix syslog source
-4. Deploy the Sentinel ARM template from `sentinel/NutanixAuditEvent_CL.json`
-5. Configure your destination for Microsoft Sentinel
+1. Download the latest `.crbl` file from the [Releases](../../releases) page
+2. In Cribl Stream, go to **Packs** → **Add Pack** → **Import from File** and upload the `.crbl` file
+3. Configure pack parameters (output_mode, raw_handling, etc.)
+4. Attach the pack route to your Nutanix syslog source
+5. Deploy the Sentinel ARM template from `sentinel/NutanixAuditEvent_CL.json`
+6. Configure your destination for Microsoft Sentinel
+
+## Releases
+
+Tagged releases automatically build an importable `.crbl` pack file via GitHub Actions. To create a release:
+
+```bash
+git tag v2.1.0
+git push origin v2.1.0
+```
+
+The workflow packages `package.json`, `README.md`, `default/`, and `data/` into a `.crbl` tarball and attaches it to a GitHub Release with auto-generated release notes.
 
 ## Lookup Tables
 

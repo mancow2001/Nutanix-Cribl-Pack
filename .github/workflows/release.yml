@@ -1,0 +1,44 @@
+name: Release Cribl Pack
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"
+
+      - name: Read pack name from package.json
+        id: pack
+        run: |
+          NAME=$(jq -r '.name' package.json)
+          echo "NAME=$NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Build .crbl file
+        run: |
+          PACK_NAME="${{ steps.pack.outputs.NAME }}"
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          FILENAME="${PACK_NAME}-${VERSION}.crbl"
+          tar czf "$FILENAME" \
+            package.json \
+            README.md \
+            default/ \
+            data/
+          echo "FILENAME=$FILENAME" >> "$GITHUB_ENV"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.FILENAME }}
+          generate_release_notes: true
