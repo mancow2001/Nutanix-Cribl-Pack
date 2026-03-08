@@ -1,6 +1,6 @@
 {
   "name": "nutanix-asim",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "displayName": "Nutanix ASIM Normalizer",
   "description": "Cribl pack for Nutanix Prism Central consolidated audit and CVM API audit events (local0 facility). Parses JSON audit messages, enriches with alertUid-based lookup for ASIM field mapping, MITRE ATT&CK enrichment, and security classification. Drops audit-alert_manager debug noise. Normalizes to Microsoft Sentinel ASIM AuditEvent schema with configurable output modes and data reduction.",
   "author": "Nathan Bray",
