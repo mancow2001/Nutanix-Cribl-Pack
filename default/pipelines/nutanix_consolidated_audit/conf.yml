@@ -161,13 +161,25 @@ functions:
         - lookupField: description
           eventField: _lkp_description
 
-  # ── Stage 2: ASIM AuditEvent Mapping ──
+  # ── Stage 2: Internal fields for filtering ──
 
   - id: eval
     filter: "true"
     disabled: false
     conf:
       add:
+        - disabled: false
+          name: _securityAlert
+          value: "_lkp_security_relevant === 'true' || _lkp_security_relevant === true || /^(IAM|Login|Cluster)/.test(_alertUid) || /DeleteAudit$/.test(_alertUid)"
+
+  # ── ASIM AuditEvent Mapping ──
+
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        # ── Mandatory ASIM fields ──
         - disabled: false
           name: EventVendor
           value: "'Nutanix'"
@@ -184,6 +196,12 @@ functions:
           name: EventCount
           value: "1"
         - disabled: false
+          name: EventStartTime
+          value: "C.Time.strftime(_time, '%Y-%m-%dT%H:%M:%S.%LZ')"
+        - disabled: false
+          name: EventEndTime
+          value: "C.Time.strftime(_time, '%Y-%m-%dT%H:%M:%S.%LZ')"
+        - disabled: false
           name: TimeGenerated
           value: "C.Time.strftime(_time, '%Y-%m-%dT%H:%M:%S.%LZ')"
         - disabled: false
@@ -193,17 +211,21 @@ functions:
           name: EventResult
           value: "'Success'"
         - disabled: false
+          name: Dvc
+          value: "host || ''"
+        - disabled: false
+          name: Operation
+          value: "_operationType || ''"
+        - disabled: false
+          name: Object
+          value: "_allEntityNames || ''"
+        # ── Recommended ASIM fields ──
+        - disabled: false
           name: EventSeverity
           value: "_lkp_risk_level === 'high' ? 'High' : _lkp_risk_level === 'critical' ? 'High' : _lkp_risk_level === 'medium' ? 'Medium' : 'Informational'"
         - disabled: false
           name: EventOriginalType
           value: "_alertUid || _operationType || 'consolidated_audit'"
-        - disabled: false
-          name: EventCategory
-          value: "_lkp_event_category || 'Administration'"
-        - disabled: false
-          name: Dvc
-          value: "host || ''"
         - disabled: false
           name: DvcHostname
           value: "host || ''"
@@ -211,20 +233,14 @@ functions:
           name: ActorUsername
           value: "_userName || _auditUser || ''"
         - disabled: false
+          name: ActorUsernameType
+          value: "(_userName || _auditUser) ? 'Simple' : ''"
+        - disabled: false
           name: SrcIpAddr
           value: "_clientIp || _ipAddress || ''"
         - disabled: false
           name: ActorSessionId
           value: "_sessionId || _recordUuid || ''"
-        - disabled: false
-          name: AccessMethod
-          value: "_browserInfo && _browserInfo.trim() ? _browserInfo : 'API'"
-        - disabled: false
-          name: Operation
-          value: "_operationType || ''"
-        - disabled: false
-          name: Object
-          value: "_allEntityNames || ''"
         - disabled: false
           name: ObjectType
           value: "_lkp_object_type || (_primaryEntityType === 'IAM' ? 'Policy Rule' : _primaryEntityType === 'vm' ? 'Cloud Resource' : _primaryEntityType === 'host' ? 'Cloud Resource' : _primaryEntityType === 'Session' ? 'Policy Rule' : 'Other')"
@@ -234,12 +250,7 @@ functions:
         - disabled: false
           name: NewValue
           value: "_configAfter || _defaultMsg || ''"
-        - disabled: false
-          name: SecurityAlert
-          value: "_lkp_security_relevant === 'true' || _lkp_security_relevant === true || /^(IAM|Login|Cluster)/.test(_alertUid) || /DeleteAudit$/.test(_alertUid)"
-        - disabled: false
-          name: RiskLevel
-          value: "_lkp_risk_level || 'info'"
+        # ── MITRE enrichment fields ──
         - disabled: false
           name: MitreTactic
           value: "_lkp_mitre_tactic && _lkp_mitre_tactic !== '-' ? _lkp_mitre_tactic : ''"
@@ -268,7 +279,7 @@ functions:
           value: "''"
 
   - id: eval
-    filter: "C.vars['enable_mitre_enrichment'] === 'security_only' && !SecurityAlert"
+    filter: "C.vars['enable_mitre_enrichment'] === 'security_only' && !_securityAlert"
     disabled: false
     conf:
       add:
@@ -285,13 +296,13 @@ functions:
   # ── Event Filter ──
 
   - id: drop
-    filter: "C.vars['event_filter'] === 'security' && !SecurityAlert && !/^(IAM|Login|Cluster)/.test(_alertUid) && !/DeleteAudit$/.test(_alertUid)"
+    filter: "C.vars['event_filter'] === 'security' && !_securityAlert && !/^(IAM|Login|Cluster)/.test(_alertUid) && !/DeleteAudit$/.test(_alertUid)"
     disabled: false
     conf: {}
     description: "Security mode: drop non-security events"
 
   - id: drop
-    filter: "C.vars['event_filter'] === 'operational' && (SecurityAlert || /^(IAM|Login|Cluster)/.test(_alertUid) || /DeleteAudit$/.test(_alertUid))"
+    filter: "C.vars['event_filter'] === 'operational' && (_securityAlert || /^(IAM|Login|Cluster)/.test(_alertUid) || /DeleteAudit$/.test(_alertUid))"
     disabled: false
     conf: {}
     description: "Operational mode: drop security events"
@@ -303,35 +314,53 @@ functions:
     disabled: false
     conf:
       keep:
+        # Mandatory ASIM fields
         - EventVendor
         - EventProduct
         - EventSchema
         - EventSchemaVersion
         - EventCount
+        - EventStartTime
+        - EventEndTime
         - TimeGenerated
         - EventType
         - EventResult
-        - EventSeverity
-        - EventOriginalType
-        - EventCategory
         - Dvc
-        - DvcHostname
-        - ActorUsername
-        - SrcIpAddr
-        - ActorSessionId
-        - AccessMethod
         - Operation
         - Object
+        # Recommended ASIM fields
+        - EventSeverity
+        - EventOriginalType
+        - DvcHostname
+        - ActorUsername
+        - ActorUsernameType
+        - SrcIpAddr
+        - ActorSessionId
         - ObjectType
         - OldValue
         - NewValue
-        - SecurityAlert
-        - RiskLevel
+        # MITRE enrichment
         - MitreTactic
         - MitreTechniqueId
         - MitreTechniqueName
       remove:
         - "*"
+
+  - id: eval
+    filter: "C.vars['output_mode'] === 'asim_only' && C.vars['include_recommended_fields'] === false"
+    disabled: false
+    conf:
+      remove:
+        - EventSeverity
+        - EventOriginalType
+        - DvcHostname
+        - ActorUsername
+        - ActorUsernameType
+        - SrcIpAddr
+        - ActorSessionId
+        - ObjectType
+        - OldValue
+        - NewValue
 
   - id: eval
     filter: "C.vars['output_mode'] !== 'asim_only'"
@@ -340,6 +369,7 @@ functions:
       remove:
         - message
         - _nutanix_source
+        - _securityAlert
         - _parsed
         - _alertUid
         - _operationType

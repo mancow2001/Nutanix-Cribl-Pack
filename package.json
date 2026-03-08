@@ -1,6 +1,6 @@
 {
   "name": "nutanix-asim",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "displayName": "Nutanix ASIM Normalizer",
   "description": "Cribl pack for Nutanix Prism Central consolidated audit and CVM API audit events (local0 facility). Parses JSON audit messages, enriches with alertUid-based lookup for ASIM field mapping, MITRE ATT&CK enrichment, and security classification. Drops audit-alert_manager debug noise. Normalizes to Microsoft Sentinel ASIM AuditEvent schema with configurable output modes and data reduction.",
   "author": "Nathan Bray",
@@ -15,8 +15,15 @@
       "name": "output_mode",
       "type": "string",
       "label": "Output Mode",
-      "description": "Controls output field set. 'asim_only' keeps only the 27 ASIM AuditEvent fields (maximum data reduction). 'enriched' keeps ASIM fields alongside all vendor-specific extracted fields.",
+      "description": "Controls output field set. 'asim_only' keeps only mandatory and recommended ASIM AuditEvent fields plus MITRE enrichment (maximum data reduction). 'enriched' keeps ASIM fields alongside all vendor-specific extracted fields.",
       "default": "asim_only"
+    },
+    {
+      "name": "include_recommended_fields",
+      "type": "boolean",
+      "label": "Include Recommended ASIM Fields",
+      "description": "When enabled (default), asim_only output includes both mandatory and recommended ASIM schema fields. When disabled, only mandatory ASIM fields and MITRE enrichment are emitted for maximum data reduction.",
+      "default": true
     },
     {
       "name": "raw_handling",

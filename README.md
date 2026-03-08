@@ -37,34 +37,47 @@ This pack processes three distinct Nutanix event source types and:
 | SOCKADDR | Drop | Low - Redundant | - |
 | PARENT | Drop | Low - Redundant | - |
 
-## ASIM Field Schema (27 Fields)
+## ASIM AuditEvent Field Schema
+
+Fields are classified per the [Microsoft ASIM AuditEvent schema](https://learn.microsoft.com/en-us/azure/sentinel/normalization-schema-audit). Use the `include_recommended_fields` parameter to strip recommended fields for maximum data reduction.
+
+### Mandatory Fields (always emitted in `asim_only` mode)
 
 | ASIM Field | Source | Description |
 |------------|--------|-------------|
-| TimeGenerated | _time | Event timestamp in ISO 8601 |
 | EventVendor | Static | "Nutanix" |
-| EventProduct | Static | "AHV", "Prism", or "Prism Central" |
+| EventProduct | Static | "Prism" or "Prism Central" |
 | EventSchema | Static | "AuditEvent" |
 | EventSchemaVersion | Static | "0.1.2" |
 | EventCount | Static | 1 |
-| EventType | Lookup/mapping | Set, Create, Delete, Enable, Disable, Execute, Read, Other |
+| EventStartTime | _time | Event start timestamp in ISO 8601 |
+| EventEndTime | _time | Event end timestamp in ISO 8601 |
+| TimeGenerated | _time | Sentinel ingestion timestamp (alias for EventStartTime) |
+| EventType | Lookup/mapping | Set, Create, Delete, Enable, Execute, Read, Other |
 | EventResult | res/success field | Success, Failure, or NA |
-| EventSeverity | Lookup risk_level | High, Medium, Low, Informational |
-| EventOriginalType | audit_type/appname | Original event type |
-| EventCategory | Lookup | Configuration, Service Lifecycle, etc. |
 | Dvc | host | Reporting device |
-| DvcHostname | host | Device hostname |
-| ActorUsername | AUID/userName | User performing action |
-| SrcIpAddr | params.ip_address | Source IP (consolidated audit) |
-| ActorSessionId | ses/uuid | Session identifier |
-| AccessMethod | Source-dependent | auditd, API, browser info |
 | Operation | op/httpMethod | Action performed |
 | Object | unit/exe/endpoint | Target of operation |
-| ObjectType | Lookup | Configuration Atom, Service, Cloud Resource, etc. |
-| OldValue | - | Previous value (when available) |
-| NewValue | defaultMsg | New value or description |
-| SecurityAlert | Lookup/logic | Boolean security relevance flag |
-| RiskLevel | Lookup | critical, high, medium, low, info |
+
+### Recommended Fields (removable via `include_recommended_fields = false`)
+
+| ASIM Field | Source | Description |
+|------------|--------|-------------|
+| EventSeverity | Lookup risk_level | High, Medium, Informational |
+| EventOriginalType | audit_type/appname | Original event type |
+| DvcHostname | host | Device hostname |
+| ActorUsername | AUID/userName | User performing action |
+| ActorUsernameType | Conditional | Username format type (Simple) |
+| SrcIpAddr | params.ip_address | Source IP address |
+| ActorSessionId | ses/uuid | Session identifier |
+| ObjectType | Lookup | Configuration Atom, Service, Cloud Resource, Policy Rule, Other |
+| OldValue | config_before/params | Previous value (when available) |
+| NewValue | defaultMsg/payload | New value or description |
+
+### MITRE Enrichment Fields (controlled by `enable_mitre_enrichment`)
+
+| Field | Source | Description |
+|-------|--------|-------------|
 | MitreTactic | Lookup | MITRE ATT&CK tactic name |
 | MitreTechniqueId | Lookup | MITRE technique ID (e.g., T1098) |
 | MitreTechniqueName | Lookup | MITRE technique name |
@@ -73,7 +86,8 @@ This pack processes three distinct Nutanix event source types and:
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| output_mode | string | asim_only | `asim_only` keeps only 27 ASIM fields. `enriched` keeps ASIM + vendor fields. |
+| output_mode | string | asim_only | `asim_only` keeps only ASIM fields + MITRE enrichment. `enriched` keeps ASIM + vendor fields. |
+| include_recommended_fields | boolean | true | Include recommended ASIM fields in `asim_only` output. When false, only mandatory ASIM fields and MITRE enrichment are emitted. |
 | raw_handling | string | remove | `keep` preserves _raw, `truncate` keeps first 256 chars, `remove` drops _raw. |
 | enable_mitre_enrichment | string | security_only | `all` enriches every event, `security_only` only security events, `off` disables. |
 | event_filter | string | all | `all` emits everything, `security` keeps security events, `operational` keeps non-security. |

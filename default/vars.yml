@@ -19,6 +19,13 @@ enable_mitre_enrichment:
   description: "MITRE ATT&CK enrichment. 'all' enriches every event, 'security_only' only security events, 'off' disables."
   tags: enrichment
 
+include_recommended_fields:
+  type: boolean
+  lib: custom
+  value: "true"
+  description: "Include recommended ASIM schema fields in asim_only output. When false, only mandatory ASIM fields and MITRE enrichment are emitted."
+  tags: output
+
 event_filter:
   type: string
   lib: custom
