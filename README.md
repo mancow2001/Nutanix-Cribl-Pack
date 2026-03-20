@@ -13,29 +13,30 @@ This pack processes three distinct Nutanix event source types and:
 
 ## Supported Source Types
 
-| Source Type | Appname | Description | Pipeline |
-|-------------|---------|-------------|----------|
-| AHV Audit | (none) | Linux auditd events from AHV hypervisor nodes | `nutanix_ahv_audit` |
-| API Audit | `api_audit`, `api_audit_v3` | CVM REST API audit logs | `nutanix_api_audit` |
-| Consolidated Audit | `consolidated_audit` | Prism Central IAM/admin JSON audit events | `nutanix_consolidated_audit` |
+- **AHV Audit** — Linux auditd events from AHV hypervisor nodes. Appname: (none). Pipeline: `nutanix_ahv_audit`
+- **API Audit** — CVM REST API audit logs. Appname: `api_audit`, `api_audit_v3`. Pipeline: `nutanix_api_audit`
+- **Consolidated Audit** — Prism Central IAM/admin JSON audit events. Appname: `consolidated_audit`. Pipeline: `nutanix_consolidated_audit`
 
 ## AHV Audit Event Types
 
-| Event Type | Action | Security Value | MITRE Mapping |
-|------------|--------|----------------|---------------|
-| CONFIG_CHANGE | Keep | High - Configuration modifications | Persistence / T1098 |
-| CREATE | Keep | High - Resource creation | Persistence / T1136 |
-| DELETE | Keep | High - Resource deletion | Impact / T1485 |
-| SERVICE_START | Keep | High - Service lifecycle | Execution / T1569 |
-| SERVICE_STOP | Keep | High - Service lifecycle | Impact / T1489 |
-| ANOM_PROMISCUOUS | Keep | Critical - Security anomaly | Discovery / T1040 |
-| SYSCALL | Keep | Medium - System activity | Execution / T1059 |
-| PATH | Keep | Medium - File access | Discovery / T1083 |
-| VIRT_MACHINE_ID | Keep | Low - VM context | - |
-| NORMAL | Keep | Low - Normal audit | - |
-| PROCTITLE | Drop | Low - Redundant | - |
-| SOCKADDR | Drop | Low - Redundant | - |
-| PARENT | Drop | Low - Redundant | - |
+**Kept Events (High/Critical):**
+- `CONFIG_CHANGE` — High: Configuration modifications. MITRE: Persistence / T1098
+- `CREATE` — High: Resource creation. MITRE: Persistence / T1136
+- `DELETE` — High: Resource deletion. MITRE: Impact / T1485
+- `SERVICE_START` — High: Service lifecycle. MITRE: Execution / T1569
+- `SERVICE_STOP` — High: Service lifecycle. MITRE: Impact / T1489
+- `ANOM_PROMISCUOUS` — Critical: Security anomaly. MITRE: Discovery / T1040
+
+**Kept Events (Medium/Low):**
+- `SYSCALL` — Medium: System activity. MITRE: Execution / T1059
+- `PATH` — Medium: File access. MITRE: Discovery / T1083
+- `VIRT_MACHINE_ID` — Low: VM context
+- `NORMAL` — Low: Normal audit
+
+**Dropped Events:**
+- `PROCTITLE` — Low: Redundant
+- `SOCKADDR` — Low: Redundant
+- `PARENT` — Low: Redundant
 
 ## ASIM AuditEvent Field Schema
 
@@ -43,54 +44,46 @@ Fields are classified per the [Microsoft ASIM AuditEvent schema](https://learn.m
 
 ### Mandatory Fields (always emitted in `asim_only` mode)
 
-| ASIM Field | Source | Description |
-|------------|--------|-------------|
-| EventVendor | Static | "Nutanix" |
-| EventProduct | Static | "Prism" or "Prism Central" |
-| EventSchema | Static | "AuditEvent" |
-| EventSchemaVersion | Static | "0.1.2" |
-| EventCount | Static | 1 |
-| EventStartTime | _time | Event start timestamp in ISO 8601 |
-| EventEndTime | _time | Event end timestamp in ISO 8601 |
-| TimeGenerated | _time | Sentinel ingestion timestamp (alias for EventStartTime) |
-| EventType | Lookup/mapping | Set, Create, Delete, Enable, Execute, Read, Other |
-| EventResult | res/success field | Success, Failure, or NA |
-| Dvc | host | Reporting device |
-| Operation | op/httpMethod | Action performed |
-| Object | unit/exe/endpoint | Target of operation |
+- `EventVendor` — (Static) "Nutanix"
+- `EventProduct` — (Static) "Prism" or "Prism Central"
+- `EventSchema` — (Static) "AuditEvent"
+- `EventSchemaVersion` — (Static) "0.1.2"
+- `EventCount` — (Static) 1
+- `EventStartTime` — (_time) Event start timestamp in ISO 8601
+- `EventEndTime` — (_time) Event end timestamp in ISO 8601
+- `TimeGenerated` — (_time) Sentinel ingestion timestamp (alias for EventStartTime)
+- `EventType` — (Lookup/mapping) Set, Create, Delete, Enable, Execute, Read, Other
+- `EventResult` — (res/success field) Success, Failure, or NA
+- `Dvc` — (host) Reporting device
+- `Operation` — (op/httpMethod) Action performed
+- `Object` — (unit/exe/endpoint) Target of operation
 
 ### Recommended Fields (removable via `include_recommended_fields = false`)
 
-| ASIM Field | Source | Description |
-|------------|--------|-------------|
-| EventSeverity | Lookup risk_level | High, Medium, Informational |
-| EventOriginalType | audit_type/appname | Original event type |
-| DvcHostname | host | Device hostname |
-| ActorUsername | AUID/userName | User performing action |
-| ActorUsernameType | Conditional | Username format type (Simple) |
-| SrcIpAddr | params.ip_address | Source IP address |
-| ActorSessionId | ses/uuid | Session identifier |
-| ObjectType | Lookup | Configuration Atom, Service, Cloud Resource, Policy Rule, Other |
-| OldValue | config_before/params | Previous value (when available) |
-| NewValue | defaultMsg/payload | New value or description |
+- `EventSeverity` — (Lookup risk_level) High, Medium, Informational
+- `EventOriginalType` — (audit_type/appname) Original event type
+- `DvcHostname` — (host) Device hostname
+- `ActorUsername` — (AUID/userName) User performing action
+- `ActorUsernameType` — (Conditional) Username format type (Simple)
+- `SrcIpAddr` — (params.ip_address) Source IP address
+- `ActorSessionId` — (ses/uuid) Session identifier
+- `ObjectType` — (Lookup) Configuration Atom, Service, Cloud Resource, Policy Rule, Other
+- `OldValue` — (config_before/params) Previous value (when available)
+- `NewValue` — (defaultMsg/payload) New value or description
 
 ### MITRE Enrichment Fields (controlled by `enable_mitre_enrichment`)
 
-| Field | Source | Description |
-|-------|--------|-------------|
-| MitreTactic | Lookup | MITRE ATT&CK tactic name |
-| MitreTechniqueId | Lookup | MITRE technique ID (e.g., T1098) |
-| MitreTechniqueName | Lookup | MITRE technique name |
+- `MitreTactic` — (Lookup) MITRE ATT&CK tactic name
+- `MitreTechniqueId` — (Lookup) MITRE technique ID (e.g., T1098)
+- `MitreTechniqueName` — (Lookup) MITRE technique name
 
 ## Pack Parameters
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| output_mode | string | asim_only | `asim_only` keeps only ASIM fields + MITRE enrichment. `enriched` keeps ASIM + vendor fields. |
-| include_recommended_fields | boolean | true | Include recommended ASIM fields in `asim_only` output. When false, only mandatory ASIM fields and MITRE enrichment are emitted. |
-| raw_handling | string | remove | `keep` preserves _raw, `truncate` keeps first 256 chars, `remove` drops _raw. |
-| enable_mitre_enrichment | string | security_only | `all` enriches every event, `security_only` only security events, `off` disables. |
-| event_filter | string | all | `all` emits everything, `security` keeps security events, `operational` keeps non-security. |
+- **`output_mode`** (string, default: `asim_only`) — `asim_only` keeps only ASIM fields + MITRE enrichment. `enriched` keeps ASIM + vendor fields.
+- **`include_recommended_fields`** (boolean, default: `true`) — Include recommended ASIM fields in `asim_only` output. When false, only mandatory ASIM fields and MITRE enrichment are emitted.
+- **`raw_handling`** (string, default: `remove`) — `keep` preserves _raw, `truncate` keeps first 256 chars, `remove` drops _raw.
+- **`enable_mitre_enrichment`** (string, default: `security_only`) — `all` enriches every event, `security_only` only security events, `off` disables.
+- **`event_filter`** (string, default: `all`) — `all` emits everything, `security` keeps security events, `operational` keeps non-security.
 
 ## Pipeline Architecture
 
